@@ -34,4 +34,4 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_REGION: 'us-east-1'
         SOURCE_DIR: 'build'
-        DEST_DIR: 'games/dev/garage/${{ env.VERSION }}'
+        DEST_DIR: 'games/dev/garage/v${{ env.VERSION }}'
