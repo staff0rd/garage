@@ -25,7 +25,7 @@ jobs:
         npm run test --if-present
     - name: Set VERSION
     if: startsWith(github.ref, 'refs/tags')
-    run: echo ::set-env name=VERSION::$(echo $GITHUB_SHA | cut -c 1-6)
+    run: "echo ::set-env name=VERSION::$(npx -q git2semver)"
     - uses: jakejarvis/s3-sync-action@master
       if: startsWith(github.ref, 'refs/tags')
       with:
