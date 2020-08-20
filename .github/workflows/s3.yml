@@ -1,6 +1,7 @@
 on:
   push:
     tags: ['*']
+    branches: master
 
 env:
   NODE_VERSION: '10.x'                # set this to the node version to use
@@ -23,6 +24,7 @@ jobs:
         npm run build --if-present
         npm run test --if-present
     - uses: jakejarvis/s3-sync-action@master
+      if: startsWith(github.ref, 'refs/tags/v')
       with:
         args: --acl public-read --follow-symlinks --delete
       env:
