@@ -20,9 +20,9 @@ jobs:
       run: |
         npm install
         npm run build --if-present
-    - name: Set VERSION
-      if: startsWith(github.ref, 'refs/tags')
-      run: echo "::set-env name=VERSION::$(npx -q git2semver)"
+    - name: get-npm-version
+      id: package-version
+      uses: martinbeentjes/npm-get-version-action@master
     - uses: jakejarvis/s3-sync-action@master
       if: startsWith(github.ref, 'refs/tags')
       with:
@@ -33,4 +33,4 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_REGION: 'us-east-1'
         SOURCE_DIR: 'build'
-        DEST_DIR: 'games/dev/garage/v${{ env.VERSION }}'
+        DEST_DIR: 'games/dev/garage/v${{ steps.package-version.outputs.current-version }}'
