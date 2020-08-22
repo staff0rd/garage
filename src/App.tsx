@@ -1,26 +1,29 @@
 import React from 'react';
-import logo from './logo.svg';
+import { Game } from './Game';
 import './App.css';
+import { Colors } from './core/Colors';
+import * as PIXI from 'pixi.js';
+import { Config } from './Config';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+const getConfig: (() => Config) = () => ({
+  tileSize: 50,
+});
+
+const App = () => {
+  const pixiUpdate = (element: HTMLDivElement) => {
+
+    if (element && element.children.length <= 0) {
+        const app = new PIXI.Application({width: window.innerWidth, height: window.innerHeight, backgroundColor: Colors.BlueGrey.C900 });
+        element.appendChild(app.view);
+        const game = new Game(getConfig(), app);
+        game.init();
+    }
+}
+
+  return (<div>
+      <div ref={pixiUpdate} />
     </div>
-  );
+    );
 }
 
 export default App;
