@@ -1,7 +1,7 @@
 import * as PIXI from "pixi.js"
 import { Config } from "./Config";
-import { Random } from "./core/Random";
-import { ColorUtils } from "./core/Colors";
+import { Random, ColorUtils } from '@staff0rd/typescript';
+
 
 export class Game {
     private pixi: PIXI.Application;

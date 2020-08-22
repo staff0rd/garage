@@ -1,7 +1,7 @@
 import React from 'react';
 import { Game } from './Game';
 import './App.css';
-import { Colors } from './core/Colors';
+import { Colors } from '@staff0rd/typescript'
 import * as PIXI from 'pixi.js';
 import { Config } from './Config';
 
