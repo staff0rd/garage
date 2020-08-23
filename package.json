@@ -18,7 +18,7 @@
     "@types/react-dom": "^16.9.0",
     "@types/react-redux": "^7.1.9",
     "@types/webpack-env": "^1.15.2",
-    "material-table": "^1.68.1",
+    "material-table": "1.68.0",
     "pixi.js": "^5.3.3",
     "react": "^16.13.1",
     "react-countdown": "^2.2.1",

@@ -3,7 +3,6 @@ import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import SpeedDial, { SpeedDialProps } from '@material-ui/lab/SpeedDial';
 import SpeedDialIcon from '@material-ui/lab/SpeedDialIcon';
 import SpeedDialAction from '@material-ui/lab/SpeedDialAction';
-import SellIcon from '@material-ui/icons/AttachMoney';
 import BuyIcon from '@material-ui/icons/ShoppingCart';
 import { useDispatch } from 'react-redux';
 import { show as showBuyScreen } from '../store/buyScreenSlice'

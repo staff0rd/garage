@@ -56,39 +56,36 @@ export default function BuyScreen() {
         maxWidth='lg'
         onClose={handleClose}
         aria-labelledby="alert-dialog-slide-title"
-        aria-describedby="alert-dialog-slide-description"
       >
         <DialogContent>
-          <DialogContentText id="alert-dialog-slide-description">
-            <div className={classes.table}>
-              <MaterialTable
-                options={{
-                  pageSizeOptions: [],
-                  padding: "dense",
-                }}
-                localization={{
-                  pagination: {
-                    labelRowsSelect: '',
-                  }
-                }}
-                components={{
-                  Container: props => <Paper {...props} elevation={0}/>
-                }}
-                icons={tableIcons}
-                columns={[
-                  { title: 'Id', field: 'id', hidden: true },
-                  { title: 'Count', field: 'count' },
-                  { title: 'Name', field: 'name' },
-                  { title: 'PerUnit', field: 'costPerUnit', type: 'numeric', 
-                    cellStyle: { width: 30, maxWidth: 30, padding: 0 },
-                    headerStyle: { width: 30, maxWidth: 30 } },
-                  { title: 'Total', field: 'cost', type: 'numeric' }
-                ]}
-                data={JSON.parse(JSON.stringify(offers))}
-                title={<div>Buy (<Countdown date={offerRefresh} renderer={countdownRenderer} />)</div>}
-              />
-            </div>
-          </DialogContentText>
+          <div className={classes.table}>
+            <MaterialTable
+              options={{
+                pageSizeOptions: [],
+                padding: "dense",
+              }}
+              localization={{
+                pagination: {
+                  labelRowsSelect: '',
+                }
+              }}
+              components={{
+                Container: props => <Paper {...props} elevation={0}/>
+              }}
+              icons={tableIcons}
+              columns={[
+                { title: 'Id', field: 'id', hidden: true },
+                { title: 'Count', field: 'count' },
+                { title: 'Name', field: 'name' },
+                { title: 'PerUnit', field: 'costPerUnit', type: 'numeric', 
+                  cellStyle: { width: 30, maxWidth: 30, padding: 0 },
+                  headerStyle: { width: 30, maxWidth: 30 } },
+                { title: 'Total', field: 'cost', type: 'numeric' }
+              ]}
+              data={JSON.parse(JSON.stringify(offers))}
+              title={<div>Buy (<Countdown date={offerRefresh} renderer={countdownRenderer} />)</div>}
+            />
+          </div>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">
