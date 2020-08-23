@@ -24,7 +24,7 @@ jobs:
       id: package-version
       uses: martinbeentjes/npm-get-version-action@master
     - uses: jakejarvis/s3-sync-action@master
-      if: startsWith(github.ref, 'refs/tags')
+      if: startsWith(github.ref, 'refs/tags/v')
       with:
         args: --acl public-read --follow-symlinks --delete
       env:
