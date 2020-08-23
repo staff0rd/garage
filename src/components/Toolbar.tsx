@@ -5,6 +5,9 @@ import SpeedDialIcon from '@material-ui/lab/SpeedDialIcon';
 import SpeedDialAction from '@material-ui/lab/SpeedDialAction';
 import SellIcon from '@material-ui/icons/AttachMoney';
 import BuyIcon from '@material-ui/icons/ShoppingCart';
+import { useDispatch } from 'react-redux';
+import { show as showBuyScreen } from '../store/buyScreenSlice'
+import { ActionCreatorWithoutPayload } from '@reduxjs/toolkit';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -35,8 +38,8 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const actions = [
-  { icon: <BuyIcon />, name: 'Buy' },
-  { icon: <SellIcon />, name: 'Sell' },
+  { icon: <BuyIcon />, name: 'Buy', action: showBuyScreen },
+  // { icon: <SellIcon />, name: 'Sell', action: showBuyScreen },
 ];
 
 export const Toolbar = () => {
@@ -44,6 +47,7 @@ export const Toolbar = () => {
   const [direction] = React.useState<SpeedDialProps['direction']>('up');
   const [open, setOpen] = React.useState(false);
   const [hidden] = React.useState(false);
+  const dispatch = useDispatch();
 
   const handleClose = () => {
     setOpen(false);
@@ -52,6 +56,10 @@ export const Toolbar = () => {
   const handleOpen = () => {
     setOpen(true);
   };
+
+  const handleClick = (creator: ActionCreatorWithoutPayload<string>) => {
+    dispatch(creator());
+  }
 
   return (
     <SpeedDial
@@ -69,7 +77,7 @@ export const Toolbar = () => {
           key={action.name}
           icon={action.icon}
           tooltipTitle={action.name}
-          onClick={handleClose}
+          onClick={() => handleClick(action.action)}
         />
       ))}
     </SpeedDial>

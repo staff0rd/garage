@@ -1,5 +1,5 @@
 import * as PIXI from "pixi.js"
-import { Config } from "./Config";
+import { Config } from './store/appSlice';
 import { Random, ColorUtils } from '@staff0rd/typescript';
 
 
