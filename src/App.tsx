@@ -41,7 +41,7 @@ const App = () => {
 
   useEffect(() => { 
     refresh();
-    return clearInterval(timer);
+    return () => clearInterval(timer);
   }, [refresh, timer]);
 
   useEffect(() => {
