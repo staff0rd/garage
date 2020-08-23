@@ -4,7 +4,7 @@ on:
     tags: ['*']
 
 env:
-  NODE_VERSION: '10.x'                # set this to the node version to use
+  NODE_VERSION: '14.x'                # set this to the node version to use
 
 jobs:
   build-and-deploy:
@@ -16,10 +16,14 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ env.NODE_VERSION }}
+        registry-url: https://npm.pkg.github.com/
+        scope: '@staff0rd'
     - name: npm install, build, and test
       run: |
         npm install
         npm run build --if-present
+      env:
+        NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
     - name: get-npm-version
       id: package-version
       uses: martinbeentjes/npm-get-version-action@master
