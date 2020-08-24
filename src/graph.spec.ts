@@ -1,5 +1,4 @@
-import generateGrid from './generateGrid';
-import getNodeByPoint from './getNodeByPoint';
+import { getNodeByPoint, generateGrid } from "./graph";
 
 describe('generateGrid', () => {
     describe('generate', () => {
@@ -24,6 +23,10 @@ describe('generateGrid', () => {
     })
 
     describe('join', () => {
+        describe('when above', () => {
+            it ('should create links', () => {
 
+            })
+        })
     })
 });

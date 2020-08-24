@@ -1,7 +1,17 @@
-import createGraph from 'ngraph.graph';
-import nodeId from './nodeId'
+import createGraph, { Graph, Node } from 'ngraph.graph';
 
-export default function generateGrid<NodeData>(
+export function nodeId(x: number, y: number) {
+    return `${x}-${y}`;
+}
+
+export function getNodeByPoint<NodeData, LinkData>(graph: Graph<NodeData, LinkData>, x: number, y: number) {
+    const id = nodeId(x, y);
+    const nodes: Node<NodeData>[] = [];
+    graph.forEachNode(n => { nodes.push(n); });
+    return nodes.filter(n => n.id === id)[0];
+}
+
+export function generateGrid<NodeData>(
     startX: number,
     startY: number,
     width: number,
