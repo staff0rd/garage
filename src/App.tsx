@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { Game } from './Game';
 import { Colors } from '@staff0rd/typescript';
 import * as PIXI from 'pixi.js';
@@ -32,17 +32,16 @@ const App = () => {
   const dispatch = useCallback(useDispatch(), []);
   
   const refresh = useCallback(() => {
+    console.log('refresh')
     const nextRefresh = new Date();
     nextRefresh.setSeconds(nextRefresh.getSeconds() + config.offerRefreshSeconds);
     dispatch(refreshOffers(nextRefresh.getTime()));
   }, [dispatch, config.offerRefreshSeconds]);
-  
-  const [timer] = useState<NodeJS.Timeout>(setInterval(refresh, config.offerRefreshSeconds * 1000));
 
   useEffect(() => { 
-    refresh();
+    const timer = setInterval(refresh, config.offerRefreshSeconds * 1000);
     return () => clearInterval(timer);
-  }, [refresh, timer]);
+  });
 
   useEffect(() => {
     window.onresize = () => {
