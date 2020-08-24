@@ -62,14 +62,16 @@ export class Game {
         const drivewayColor = Colors.BlueGrey.C200;
         const tileSize = this.config.tileSize;
 
-        getNodes(this.graph)
-        .forEach(n => {
+        getNodes(this.graph).forEach(n => {
             const {x, y} = getPointFromNodeId(n.id);
             const tile = new PIXI.Graphics()
                 .beginFill(n.data.floorType === FloorType.Garage ? floorColor : drivewayColor)
                 .drawRect(x * tileSize, y * tileSize, tileSize, tileSize);
+            tile.interactive = true;
+            tile.buttonMode = true;
             this.floor.addChild(tile);
         });
+        
         this.floor.position.set(this.pixi.screen.width / 2, this.pixi.screen.height / 2);
         this.floor.pivot.set(this.floor.width/2, (this.floor.height - 2*tileSize) /2);
     }
