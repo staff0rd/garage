@@ -5,18 +5,23 @@ describe('graph', () => {
     describe('ids', () => {
         it ('should create id', () => {
             const result = getNodeIdFromPoint(1, 1);
-            expect(result).toBe('1-1');
+            expect(result).toBe('1|1');
         })
         it('should get point', () => {
-            const { x, y } = getPointFromNodeId('1-2')
+            const { x, y } = getPointFromNodeId('1|2')
             expect(x).toBe(1);
             expect(y).toBe(2);
+        })
+        it('should get negative points', () => {
+            const { x, y } = getPointFromNodeId('-1|-2')
+            expect(x).toBe(-1);
+            expect(y).toBe(-2);
         })
     })
     describe('generate', () => {
         it ('should offset', () => {
             const { nodes } = generate(-1, -1, 1, 1, () => {});
-            expect(nodes[0].id).toBe('-1--1');
+            expect(nodes[0].id).toBe('-1|-1');
         });
         it ('should create node and no link', () => {
             const { links, nodes} = generate(0, 0, 1, 1, () => {});

@@ -1,11 +1,11 @@
 import createGraph, { Graph, Node, Link } from 'ngraph.graph';
 
 export function getNodeIdFromPoint(x: number, y: number) {
-    return `${x}-${y}`;
+    return `${x}|${y}`;
 }
 
-export function getPointFromNodeId(id: string) {
-    const split = id.split('-');
+export function getPointFromNodeId(id: string | number) {
+    const split = id.toString().split('|');
     const x = parseInt(split[0]);
     const y = parseInt(split[1]);
     return { x, y };
