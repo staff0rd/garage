@@ -1,12 +1,14 @@
-import React from 'react';
-import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-import SpeedDial, { SpeedDialProps } from '@material-ui/lab/SpeedDial';
-import SpeedDialIcon from '@material-ui/lab/SpeedDialIcon';
-import SpeedDialAction from '@material-ui/lab/SpeedDialAction';
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import OrdersIcon from '@material-ui/icons/ListAlt';
 import BuyIcon from '@material-ui/icons/ShoppingCart';
-import { useDispatch } from 'react-redux';
-import { show as showBuyScreen } from '../store/buyScreenSlice'
+import SpeedDial, { SpeedDialProps } from '@material-ui/lab/SpeedDial';
+import SpeedDialAction from '@material-ui/lab/SpeedDialAction';
+import SpeedDialIcon from '@material-ui/lab/SpeedDialIcon';
 import { ActionCreatorWithoutPayload } from '@reduxjs/toolkit';
+import React from 'react';
+import { useDispatch } from 'react-redux';
+import { show as showBuyScreen } from '../store/buyScreenSlice';
+import { show as showOrderScreen } from '../store/orderScreenSlice';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -38,6 +40,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const actions = [
   { icon: <BuyIcon />, name: 'Buy', action: showBuyScreen },
+  { icon: <OrdersIcon />, name: 'Orders', action: showOrderScreen },
   // { icon: <SellIcon />, name: 'Sell', action: showBuyScreen },
 ];
 

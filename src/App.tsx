@@ -8,6 +8,7 @@ import BuyScreen from './components/BuyScreen';
 import { RootState } from './store/rootReducer';
 import { refreshOffers } from './store/buyScreenSlice'
 import { useSelector, useDispatch } from 'react-redux';
+import OrderScreen from './components/OrderScreen';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -39,9 +40,10 @@ const App = () => {
   }, [dispatch, config.offerRefreshSeconds]);
 
   useEffect(() => { 
+    refresh();
     const timer = setInterval(refresh, config.offerRefreshSeconds * 1000);
     return () => clearInterval(timer);
-  });
+  }, [refresh, config.offerRefreshSeconds]);
 
   useEffect(() => {
     window.onresize = () => {
@@ -63,6 +65,7 @@ const App = () => {
       <div className={classes.pixi} ref={pixiUpdate} />
       <Toolbar />
       <BuyScreen />
+      <OrderScreen />
     </div>
   );
 }

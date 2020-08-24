@@ -5,29 +5,52 @@ export interface Config {
     offerRefreshSeconds: number
 }
 
+interface Part {
+    id: number;
+    name: string;
+}
+
 type AppState = {
     config: Config
+    money: number,
+    parts: Part[],
 }
+
+const getParts: () => Part[] = () => [...Array(8)].map((i, ix) => ({
+        name: `Widget ${String.fromCharCode(65 + ix)}`,
+        id: ix, 
+    }));
 
 export const initialState: AppState = {
     config: {
         tileSize: 50,
         offerRefreshSeconds: 10,
-    }
+    },
+    money: 500,
+    parts: getParts(),
 }
 
 const appSlice = createSlice({
     name: 'app',
     initialState,
     reducers: {
-        setConfig (state, action: PayloadAction<Config>) {
-            state.config = action.payload;
+        setConfig (state, { payload }: PayloadAction<Config>) {
+            state.config = payload;
+        },
+        addMoney(state, { payload }: PayloadAction<number>) {
+            state.money += payload;
+        },
+        removeMoney(state, { payload }: PayloadAction<number>) {
+            state.money -= payload;
         }
+
     }
 });
 
 export const {
-    setConfig
+    setConfig,
+    addMoney,
+    removeMoney,
 } = appSlice.actions;
 
 export default appSlice.reducer;

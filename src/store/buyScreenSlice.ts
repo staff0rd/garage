@@ -7,6 +7,7 @@ export type BuyableItem = {
     cost: number,
     costPerUnit: number,
     count: number,
+    partId: number,
 };
 
 type BuyScreenState = {
@@ -21,7 +22,8 @@ const getOffers = () => [...Array(8)].map((i, ix) => {
         id: ix.toString(),
         cost: 0,
         costPerUnit: Random.between(2, 10),
-        count: Random.between(10, 100)
+        count: Random.between(10, 100),
+        partId: ix
     } as BuyableItem;
     item.cost = item.costPerUnit * item.count;
     return item;
@@ -29,7 +31,7 @@ const getOffers = () => [...Array(8)].map((i, ix) => {
 
 const initialState: BuyScreenState = {
     show: false,
-    offers: getOffers(),
+    offers: [],
     offerRefresh: new Date().getTime(),
 }
 

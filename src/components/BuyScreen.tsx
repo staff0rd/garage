@@ -1,38 +1,34 @@
-import React, { useCallback } from 'react';
-import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import Slide from '@material-ui/core/Slide';
-import { TransitionProps } from '@material-ui/core/transitions';
+import React, { useCallback, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../store/rootReducer';
 import { makeStyles } from '@material-ui/core/styles';
-import { hide } from '../store/buyScreenSlice'
-import MaterialTable from 'material-table';
-import { tableIcons } from './tableIcons';
-import Paper from '@material-ui/core/Paper';
-import Countdown, { CountdownRenderProps } from 'react-countdown';
+import { hide, BuyableItem } from '../store/buyScreenSlice'
+import AcceptOfferIcon from '@material-ui/icons/AddBox';
+import Prompt, { PromptOptions } from './Prompt';
+import { removeMoney } from '../store/appSlice';
+import { addOrder } from '../store/orderScreenSlice';
+import { Random, Guid } from '@staff0rd/typescript';
+import { StandardTable } from './StandardTable';
+import { StandardDialog } from './StandardDialog';
+import { Countdown } from './Countdown';
 
 const useStyles = makeStyles(() => ({
-  root: {
-  },
   table: {
     minWidth: 500,
   }
 }));
 
-const Transition = React.forwardRef(function Transition(
-  props: TransitionProps & { children?: React.ReactElement<any, any> },
-  ref: React.Ref<unknown>,
-) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
-
 export default function BuyScreen() {
   const open = useSelector((state: RootState) => state.buyScreen.show);
   const offers = useSelector((state: RootState) => state.buyScreen.offers);
   const offerRefresh = useSelector((state: RootState) => state.buyScreen.offerRefresh);
+  const money = useSelector((state: RootState) => state.app.money);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [promptOptions, setPromptOptions] = useState<PromptOptions>({
+    ok: () => {},
+    text: '',
+    title: '',
+  }) 
   
   const d = useDispatch();
   const dispatch = useCallback(d, []);
@@ -42,55 +38,57 @@ export default function BuyScreen() {
     dispatch(hide());
   };
 
-  const countdownRenderer = ({ minutes, seconds }: CountdownRenderProps) => (
-    <span>{minutes.toString().padStart(2, '0')}:{seconds.toString().padStart(2, '0')}</span>
-  );
+  const confirm = (offer: BuyableItem) => {
+    setPromptOptions({
+      title: 'Confirm',
+      text: `Buy ${offer.count} x ${offer.name} for $${offer.cost}?`,
+      ok: () => {
+        dispatch(removeMoney(offer.cost));
+        const arrive = new Date();
+        arrive.setSeconds(arrive.getSeconds() + Random.between(10, 30));
+        dispatch(addOrder({
+          arriving: arrive.getTime(),
+          cost: offer.cost,
+          id: Guid(),
+          partId: offer.partId,
+          name: offer.name,
+          count: offer.count,
+        }))
+        handleClose();
+      }
+    });
+    setShowConfirm(true);
+  }
 
   return (
-      <Dialog
-        className={classes.root}
-        open={open}
-        TransitionComponent={Transition}
-        keepMounted
-        maxWidth='lg'
-        onClose={handleClose}
-        aria-labelledby="alert-dialog-slide-title"
-      >
-        <DialogContent>
-          <div className={classes.table}>
-            <MaterialTable
-              options={{
-                pageSizeOptions: [],
-                padding: "dense",
-              }}
-              localization={{
-                pagination: {
-                  labelRowsSelect: '',
-                }
-              }}
-              components={{
-                Container: props => <Paper {...props} elevation={0}/>
-              }}
-              icons={tableIcons}
-              columns={[
-                { title: 'Id', field: 'id', hidden: true },
-                { title: 'Count', field: 'count' },
-                { title: 'Name', field: 'name' },
-                { title: 'PerUnit', field: 'costPerUnit', type: 'numeric', 
-                  cellStyle: { width: 30, maxWidth: 30, padding: 0 },
-                  headerStyle: { width: 30, maxWidth: 30 } },
-                { title: 'Total', field: 'cost', type: 'numeric' }
-              ]}
-              data={JSON.parse(JSON.stringify(offers))}
-              title={<div>Buy (<Countdown date={offerRefresh} renderer={countdownRenderer} />)</div>}
-            />
-          </div>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="primary">
-            Cancel
-          </Button>
-        </DialogActions>
-      </Dialog>
+    <>
+      <StandardDialog open={open} handleClose={handleClose}>
+        <div className={classes.table}>
+          <StandardTable
+            columns={[
+              { field: 'id', hidden: true },
+              { field: 'partId', hidden: true},
+              { title: 'Count', field: 'count' },
+              { title: 'Name', field: 'name' },
+              { title: 'PerUnit', field: 'costPerUnit', type: 'numeric', 
+                cellStyle: { width: 30, maxWidth: 30, padding: 0 },
+                headerStyle: { width: 30, maxWidth: 30 } },
+              { title: 'Total', field: 'cost', type: 'numeric' }
+            ]}
+            actions={[
+              (rowData: BuyableItem) => ({
+                icon: AcceptOfferIcon,
+                tooltip: 'Buy',
+                onClick: (event, rowData: any) => confirm(rowData),
+                disabled: rowData.cost > money
+              })
+            ]}
+            data={JSON.parse(JSON.stringify(offers))}
+            title={<div>Buy (<Countdown date={offerRefresh} />)</div>}
+          />
+        </div>
+      </StandardDialog>
+      <Prompt open={showConfirm} setOpen={setShowConfirm} options={promptOptions} />
+    </>
   );
 }
