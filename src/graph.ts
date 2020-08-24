@@ -32,27 +32,36 @@ export function generateGrid<NodeData, LinkData>(
 
     const links: Link<LinkData>[] = [];
     const nodes: Node<NodeData>[] = [];
+    const lastX = startX + width - 1;
+    const lastY = startY + height - 1;
     
     if (height < 1 || width < 1) {
         throw new Error("Invalid number of nodes in grid graph");
     }
 
-    if (height === 1 && width === 1) {
-        const node = graph.addNode(nodeId(startX, startY), data(startX, startY));
-        nodes.push(node);
-        return { graph, nodes, links };
-    }
-
     for (let i = 0; i < height; ++i) {
         for (let j = 0; j < width; ++j) {
-            const node = graph.addNode(nodeId(j, i), data(j, i))
+            const y = i + startY;
+            const x = j + startX;
+            if (getNodeByPoint(graph, x, y)) {
+                continue;
+            }
+            const node = graph.addNode(nodeId(x, y), data(x, y))
             nodes.push(node);
-            if (i > 0) { 
-                const link = graph.addLink(nodeId(j, i), nodeId(j, i -1));
+            if (y > startY || getNodeByPoint(graph, x, y - 1)) { 
+                const link = graph.addLink(nodeId(x, y), nodeId(x, y -1));
                 links.push(link);
             }
-            if (j > 0) {
-                const link = graph.addLink(nodeId(j, i), nodeId(j-1, i));
+            if (y === lastY && getNodeByPoint(graph, x, y + 1)) {
+                const link = graph.addLink(nodeId(x, y + 1), nodeId(x, y));
+                links.push(link);
+            }
+            if (x > startX || getNodeByPoint(graph, x - 1, y)) {
+                const link = graph.addLink(nodeId(x, y), nodeId(x-1, y));
+                links.push(link);
+            }
+            if (x === lastX && getNodeByPoint(graph, x + 1, y)) {
+                const link = graph.addLink(nodeId(x + 1, y), nodeId(x, y));
                 links.push(link);
             }
         }
