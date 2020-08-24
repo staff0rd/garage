@@ -1,7 +1,18 @@
-import { getNodeByPoint, generateGrid as generate } from "./graph";
+import { getNodeByPoint, generate as generate, getNodeIdFromPoint, getPointFromNodeId } from "./graph";
 import { Graph } from "ngraph.graph";
 
-describe('generateGrid', () => {
+describe('graph', () => {
+    describe('ids', () => {
+        it ('should create id', () => {
+            const result = getNodeIdFromPoint(1, 1);
+            expect(result).toBe('1-1');
+        })
+        it('should get point', () => {
+            const { x, y } = getPointFromNodeId('1-2')
+            expect(x).toBe(1);
+            expect(y).toBe(2);
+        })
+    })
     describe('generate', () => {
         it ('should offset', () => {
             const { nodes } = generate(-1, -1, 1, 1, () => {});

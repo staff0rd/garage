@@ -1,11 +1,18 @@
 import createGraph, { Graph, Node, Link } from 'ngraph.graph';
 
-export function nodeId(x: number, y: number) {
+export function getNodeIdFromPoint(x: number, y: number) {
     return `${x}-${y}`;
 }
 
+export function getPointFromNodeId(id: string) {
+    const split = id.split('-');
+    const x = parseInt(split[0]);
+    const y = parseInt(split[1]);
+    return { x, y };
+}
+
 export function getNodeByPoint<NodeData, LinkData>(graph: Graph<NodeData, LinkData>, x: number, y: number) {
-    const id = nodeId(x, y);
+    const id = getNodeIdFromPoint(x, y);
     const nodes: Node<NodeData>[] = getNodes<NodeData, LinkData>(graph);
     return nodes.filter(n => n.id === id)[0];
 }
@@ -22,7 +29,7 @@ export function getLinks<NodeData, LinkData>(graph: Graph<NodeData, LinkData>) {
     return links;
 }
 
-export function generateGrid<NodeData, LinkData>(
+export function generate<NodeData, LinkData>(
     startX: number,
     startY: number,
     width: number,
@@ -46,22 +53,22 @@ export function generateGrid<NodeData, LinkData>(
             if (getNodeByPoint(graph, x, y)) {
                 continue;
             }
-            const node = graph.addNode(nodeId(x, y), data(x, y))
+            const node = graph.addNode(getNodeIdFromPoint(x, y), data(x, y))
             nodes.push(node);
             if (y > startY || getNodeByPoint(graph, x, y - 1)) { 
-                const link = graph.addLink(nodeId(x, y), nodeId(x, y -1));
+                const link = graph.addLink(getNodeIdFromPoint(x, y), getNodeIdFromPoint(x, y -1));
                 links.push(link);
             }
             if (y === lastY && getNodeByPoint(graph, x, y + 1)) {
-                const link = graph.addLink(nodeId(x, y + 1), nodeId(x, y));
+                const link = graph.addLink(getNodeIdFromPoint(x, y + 1), getNodeIdFromPoint(x, y));
                 links.push(link);
             }
             if (x > startX || getNodeByPoint(graph, x - 1, y)) {
-                const link = graph.addLink(nodeId(x, y), nodeId(x-1, y));
+                const link = graph.addLink(getNodeIdFromPoint(x, y), getNodeIdFromPoint(x-1, y));
                 links.push(link);
             }
             if (x === lastX && getNodeByPoint(graph, x + 1, y)) {
-                const link = graph.addLink(nodeId(x + 1, y), nodeId(x, y));
+                const link = graph.addLink(getNodeIdFromPoint(x + 1, y), getNodeIdFromPoint(x, y));
                 links.push(link);
             }
         }
