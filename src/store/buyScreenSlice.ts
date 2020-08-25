@@ -45,6 +45,9 @@ const buyScreenSlice = createSlice({
         hide(state) {
             state.show = false;
         },
+        removeOffer(state, { payload }: PayloadAction<string>) {
+            state.offers = state.offers.filter(o => o.id !== payload);
+        },
         refreshOffers(state, action: PayloadAction<number>) {
             state.offers = getOffers();
             state.offerRefresh = action.payload;
@@ -55,6 +58,7 @@ const buyScreenSlice = createSlice({
 export const {
     show,
     hide,
+    removeOffer,
     refreshOffers,
 } = buyScreenSlice.actions;
 

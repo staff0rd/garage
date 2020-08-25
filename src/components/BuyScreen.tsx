@@ -2,7 +2,7 @@ import React, { useCallback, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../store/rootReducer';
 import { makeStyles } from '@material-ui/core/styles';
-import { hide, BuyableItem } from '../store/buyScreenSlice'
+import { hide, BuyableItem, removeOffer } from '../store/buyScreenSlice'
 import AcceptOfferIcon from '@material-ui/icons/AddBox';
 import Prompt, { PromptOptions } from './Prompt';
 import { removeMoney } from '../store/appSlice';
@@ -43,6 +43,7 @@ export default function BuyScreen() {
       title: 'Confirm',
       text: `Buy ${offer.count} x ${offer.name} for $${offer.cost}?`,
       ok: () => {
+        dispatch(removeOffer(offer.id));
         dispatch(removeMoney(offer.cost));
         const arrive = new Date();
         arrive.setSeconds(arrive.getSeconds() + Random.between(10, 30));
@@ -54,7 +55,6 @@ export default function BuyScreen() {
           name: offer.name,
           count: offer.count,
         }))
-        handleClose();
       }
     });
     setShowConfirm(true);

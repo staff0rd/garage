@@ -6,7 +6,7 @@ export interface Config {
     checkOrdersMilliseconds: number
 }
 
-interface Part {
+export interface Part {
     id: number;
     name: string;
     symbol: string;

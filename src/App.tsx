@@ -28,7 +28,6 @@ const App = () => {
   const { app } = useGame();
   
   const refresh = useCallback(() => {
-    console.log('refresh')
     const nextRefresh = new Date();
     nextRefresh.setSeconds(nextRefresh.getSeconds() + config.offerRefreshSeconds);
     dispatch(refreshOffers(nextRefresh.getTime()));
