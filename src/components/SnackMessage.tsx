@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { useSnackbar, SnackbarMessage } from 'notistack';
+import { SnackbarMessage } from 'notistack';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import { RootState } from '../store/rootReducer';
@@ -18,6 +18,8 @@ type SnackMessageProps = {
     message: SnackbarMessage;
 }
 
+const normalise = (value: number, min: number, max: number) => (value - min) * 100 / (max - min);
+
 const SnackMessage = React.forwardRef<unknown, SnackMessageProps>((props, ref) => {
     const classes = useStyles();
     const notification = useSelector((state: RootState) => state.notification.notifications.find(p => p.key === props.id));
@@ -26,17 +28,15 @@ const SnackMessage = React.forwardRef<unknown, SnackMessageProps>((props, ref) =
     const [MAX] = useState(notification!.expiry!);
     const [MIN] = useState(new Date().getTime());
 
-    const normalise = (value: number) => (value - MIN) * 100 / (MAX - MIN);
-
     useEffect(() => {
       const timer = setInterval(() => {
-        setProgress(normalise(new Date().getTime()));
+        setProgress(normalise(new Date().getTime(), MIN, MAX));
       }, 500);
   
       return () => {
         clearInterval(timer);
       };
-    }, []);
+    }, [MIN, MAX]);
 
     return (
         // @ts-ignore

@@ -8,6 +8,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import OrderScreen from './components/OrderScreen';
 import { useGame } from './useGame';
 import Notifier from './components/Notifier';
+import Gamebar from './components/Gamebar';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -49,6 +50,7 @@ const App = () => {
   return (
     <div className={classes.root}>
       <div className={classes.pixi} ref={pixiUpdate} />
+      <Gamebar />
       <Toolbar />
       <BuyScreen />
       <OrderScreen />
