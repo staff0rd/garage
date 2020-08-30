@@ -11,6 +11,7 @@ import { Random, Guid } from '@staff0rd/typescript';
 import { StandardTable } from './StandardTable';
 import { StandardDialog } from './StandardDialog';
 import { Countdown } from './Countdown';
+import { addSnackbar } from '../store/notificationSlice';
 
 const useStyles = makeStyles(() => ({
   table: {
@@ -23,6 +24,7 @@ export default function BuyScreen() {
   const offers = useSelector((state: RootState) => state.buyScreen.offers);
   const offerRefresh = useSelector((state: RootState) => state.buyScreen.offerRefresh);
   const money = useSelector((state: RootState) => state.app.money);
+  const { deliveryMinSeconds, deliveryMaxSeconds } = useSelector((state: RootState) => state.app.config);
   const [showConfirm, setShowConfirm] = useState(false);
   const [promptOptions, setPromptOptions] = useState<PromptOptions>({
     ok: () => {},
@@ -46,7 +48,7 @@ export default function BuyScreen() {
         dispatch(removeOffer(offer.id));
         dispatch(removeMoney(offer.cost));
         const arrive = new Date();
-        arrive.setSeconds(arrive.getSeconds() + Random.between(10, 30));
+        arrive.setSeconds(arrive.getSeconds() + Random.between(deliveryMinSeconds, deliveryMaxSeconds));
         dispatch(addOrder({
           arriving: arrive.getTime(),
           cost: offer.cost,
@@ -54,6 +56,12 @@ export default function BuyScreen() {
           partId: offer.partId,
           name: offer.name,
           count: offer.count,
+        }));
+        dispatch(addSnackbar({
+          dismissed: false,
+          key: Guid(),
+          message: `${offer.count}x ${offer.name} enroute`,
+          expiry: arrive.getTime(),
         }))
       }
     });

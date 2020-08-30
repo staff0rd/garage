@@ -4,6 +4,8 @@ export interface Config {
     tileSize: number;
     offerRefreshSeconds: number
     checkOrdersMilliseconds: number
+    deliveryMaxSeconds: number
+    deliveryMinSeconds: number
 }
 
 export interface Part {
@@ -29,8 +31,10 @@ export const initialState: AppState = {
         tileSize: 50,
         offerRefreshSeconds: 10,
         checkOrdersMilliseconds: 250,
+        deliveryMinSeconds: 10,
+        deliveryMaxSeconds: 11,
     },
-    money: 500,
+    money: 1500,
     parts: getParts(),
 }
 

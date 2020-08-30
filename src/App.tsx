@@ -7,6 +7,7 @@ import { refreshOffers } from './store/buyScreenSlice'
 import { useSelector, useDispatch } from 'react-redux';
 import OrderScreen from './components/OrderScreen';
 import { useGame } from './useGame';
+import Notifier from './components/Notifier';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -51,6 +52,7 @@ const App = () => {
       <Toolbar />
       <BuyScreen />
       <OrderScreen />
+      <Notifier />
     </div>
   );
 }

@@ -131,16 +131,13 @@ export class Game {
 
     const tileSize = this.config.tileSize;
     const { x, y } = getPointFromNodeId(n.id);
-    
 
-
-      const color = n.data.floorType === FloorType.Garage ? this.floorColor : this.drivewayColor;
-      console.log(`${x}, ${y} color is ` + color.name);
-      const background = new PIXI.Graphics()
-        .beginFill(color.shades[4].shade)
-        .drawRect(x * tileSize, y * tileSize, tileSize, tileSize)
-        .endFill();
-      container.addChild(background);
+    const color = n.data.floorType === FloorType.Garage ? this.floorColor : this.drivewayColor;
+    const background = new PIXI.Graphics()
+      .beginFill(color.shades[4].shade)
+      .drawRect(x * tileSize, y * tileSize, tileSize, tileSize)
+      .endFill();
+    container.addChild(background);
     
     n.data.inventory.forEach((pc, ix) => {
       const rect: Rect = { x: x * tileSize, y: y * tileSize, width: tileSize / 2, height: tileSize / 2};
@@ -161,9 +158,6 @@ export class Game {
       text.pivot.set(text.width/2, text.height/2);
       text.position.set(rect.x + tileSize/4, rect.y + tileSize/4);
       container.addChild(text);
-
-      
-
     })
   }
 
