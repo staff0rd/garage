@@ -32,7 +32,7 @@ export const initialState: AppState = {
         offerRefreshSeconds: 10,
         checkOrdersMilliseconds: 250,
         deliveryMinSeconds: 10,
-        deliveryMaxSeconds: 11,
+        deliveryMaxSeconds: 60,
     },
     money: 1500,
     parts: getParts(),
