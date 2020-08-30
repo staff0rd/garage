@@ -18,13 +18,14 @@ jobs:
         node-version: ${{ env.NODE_VERSION }}
         registry-url: https://npm.pkg.github.com/
         scope: '@staff0rd'
-    - name: npm install, build, and test
-      run: |
-        npm install
-        npm run build --if-present
-        npm run test
+    - name: npm install
+      run: npm install
       env:
         NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+    - name: npm build
+      run: npm run build
+    - name: npm test
+      run: npm run test
     - name: get-npm-version
       id: package-version
       uses: martinbeentjes/npm-get-version-action@master
