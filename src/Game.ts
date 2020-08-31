@@ -106,7 +106,7 @@ export class Game {
   }
 
   private draw() {
-    const tileSize = this.config.tileSize;
+    //const tileSize = this.config.tileSize;
     
     var layout = this.thing.layout;
     layout.pinNode(this.graph.getNode('0|0'), true);
