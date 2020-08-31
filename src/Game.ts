@@ -5,6 +5,7 @@ import { generate, getNodes, getPointFromNodeId } from './graph';
 import createGraph, { Graph, Node } from 'ngraph.graph';
 import { Order } from "./store/orderScreenSlice";
 import { Part } from './store/appSlice';
+import renderPixiGraph from 'ngraph.pixi';
 
 enum FloorType {
   Garage,
@@ -39,13 +40,17 @@ export class Game {
   private floorColor = ColorUtils.randomColor("BlueGrey");
   private drivewayColor = Colors.BlueGrey.color();
   private tiles: Dictionary<PIXI.Container> = {};
+  private thing: any;
 
   constructor(config: Config, parts: Part[], pixi: PIXI.Application) {
+    PIXI.settings.RESOLUTION = window.devicePixelRatio;
     this.config = config;
     this.pixi = pixi;
     this.floor = new PIXI.Container();
     this.parts = parts;
     pixi.stage.addChild(this.floor);
+    this.thing = renderPixiGraph(this.graph, undefined, this.pixi.renderer, this.floor);
+    this.thing.run();
   }
 
   deliver(o: Order): boolean {
@@ -102,12 +107,16 @@ export class Game {
 
   private draw() {
     const tileSize = this.config.tileSize;
-    getNodes(this.graph).forEach(n => {
-      this.drawNode(n);
-    });
+    
+    var layout = this.thing.layout;
+    layout.pinNode(this.graph.getNode('0|0'), true);
 
-    this.floor.position.set(this.pixi.screen.width / 2, this.pixi.screen.height / 2);
-    this.floor.pivot.set(this.floor.width / 2, (this.floor.height - 2 * tileSize) / 2);
+    // getNodes(this.graph).forEach(n => {
+    //   this.drawNode(n);
+    // });
+
+    //this.floor.position.set(this.pixi.screen.width / 2, this.pixi.screen.height / 2);
+    //this.floor.pivot.set(this.floor.width / 2, (this.floor.height - 2 * tileSize) / 2);
   }
 
   getNodeContainer(id: string)

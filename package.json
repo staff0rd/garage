@@ -21,6 +21,7 @@
     "material-table": "1.68.0",
     "ngraph.graph": "^19.1.0",
     "ngraph.path": "^1.3.1",
+    "ngraph.pixi": "github:staff0rd/ngraph.pixi",
     "notistack": "^1.0.0",
     "pixi.js": "^5.3.3",
     "react": "^16.13.1",
