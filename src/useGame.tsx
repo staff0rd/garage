@@ -1,16 +1,19 @@
-import { useEffect, useCallback, useState } from "react";
+import { useEffect, useCallback } from "react";
 import { Game } from "./Game";
 import { Colors } from "@staff0rd/typescript";
 import * as PIXI from "pixi.js";
 import { RootState } from "./store/rootReducer";
 import { useSelector, useDispatch } from "react-redux";
 import { removeOrder } from "./store/orderScreenSlice";
+import { usePlayer } from "./usePlayer";
 
 const app = new PIXI.Application({
   width: window.innerWidth,
   height: window.innerHeight,
   backgroundColor: Colors.BlueGrey.C900,
 });
+
+const game = new Game(app);
 
 window.onresize = () => {
   app.view.width = window.innerWidth;
@@ -21,7 +24,6 @@ export const useGame = () => {
   const config = useSelector((state: RootState) => state.app.config);
   const orders = useSelector((state: RootState) => state.orderScreen.orders);
   const parts = useSelector((state: RootState) => state.app.parts);
-  const [game] = useState<Game>(new Game(config, parts, app));
   const dispatch = useCallback(useDispatch(), []);
 
   const checkOrders = useCallback(() => {
@@ -34,7 +36,7 @@ export const useGame = () => {
         dispatch(removeOrder(o.id));
       }
     });
-  }, [orders, game, dispatch]);
+  }, [orders, dispatch]);
 
   useEffect(() => {
     const timer = setInterval(checkOrders, config.checkOrdersMilliseconds);
@@ -42,10 +44,12 @@ export const useGame = () => {
   }, [checkOrders, config.checkOrdersMilliseconds]);
 
   useEffect(() => {
-    game.init();
-  }, [game]);
+    game.init(config, parts);
+  }, [config, parts]);
 
   app.stage.position.set(app.screen.width / 2, app.screen.height / 2);
 
-  return { app };
+  usePlayer(game);
+
+  return { app, game };
 };

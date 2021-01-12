@@ -2,32 +2,32 @@ import { Colors } from "@staff0rd/typescript";
 import * as PIXI from "pixi.js";
 
 export class Player {
-  private _x: number = 0;
+  pixelsPerSecond = 50;
   public get x(): number {
-    return this._x;
+    return this._view.x;
   }
   public set x(v: number) {
-    this._x = v;
+    this._view.x = v;
   }
-
-  private _y: number = 0;
   public get y(): number {
-    return this._y;
+    return this._view.y;
   }
   public set y(v: number) {
-    this._y = v;
+    this._view.y = v;
   }
 
-  private _view: PIXI.Graphics = new PIXI.Graphics();
+  _view: PIXI.Container = new PIXI.Container();
+  private _g: PIXI.Graphics = new PIXI.Graphics();
   private static _size = 10;
 
   constructor(parent: PIXI.Container) {
     parent.addChild(this._view);
+    this._view.addChild(this._g);
     this.draw();
   }
 
   draw() {
-    this._view
+    this._g
       .clear()
       .lineStyle(2, Colors.Black)
       .beginFill(Colors.Red.C500)

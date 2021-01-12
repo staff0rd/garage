@@ -1,13 +1,10 @@
 import React, { useEffect, useCallback } from "react";
 import { Toolbar } from "./components/Toolbar";
 import { makeStyles } from "@material-ui/core/styles";
-import BuyScreen from "./components/BuyScreen";
 import { RootState } from "./store/rootReducer";
 import { refreshOffers } from "./store/buyScreenSlice";
 import { useSelector, useDispatch } from "react-redux";
-import OrderScreen from "./components/OrderScreen";
 import { useGame } from "./useGame";
-import Notifier from "./components/Notifier";
 // eslint-disable-next-line
 import Gamebar from "./components/Gamebar";
 
@@ -55,9 +52,9 @@ const App = () => {
       <div className={classes.pixi} ref={pixiUpdate} />
       {/* <Gamebar /> */}
       <Toolbar app={app} />
-      <BuyScreen />
+      {/* <BuyScreen />
       <OrderScreen />
-      <Notifier />
+      <Notifier /> */}
     </div>
   );
 };

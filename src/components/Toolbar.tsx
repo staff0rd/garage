@@ -1,14 +1,16 @@
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
+import GoAnywhereIcon from "@material-ui/icons/CallMissedOutgoing";
 import OrdersIcon from "@material-ui/icons/ListAlt";
 import BuyIcon from "@material-ui/icons/ShoppingCart";
 import SpeedDial, { SpeedDialProps } from "@material-ui/lab/SpeedDial";
 import SpeedDialAction from "@material-ui/lab/SpeedDialAction";
 import SpeedDialIcon from "@material-ui/lab/SpeedDialIcon";
-import { ActionCreatorWithoutPayload } from "@reduxjs/toolkit";
 import React from "react";
 import { useDispatch } from "react-redux";
 import { show as showBuyScreen } from "../store/buyScreenSlice";
 import { show as showOrderScreen } from "../store/orderScreenSlice";
+import { goAnywhere, queue } from "store/playerSlice";
+import { shrink, center } from "Geometry";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -38,18 +40,34 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const actions = [
-  { icon: <BuyIcon />, name: "Buy", action: showBuyScreen },
-  { icon: <OrdersIcon />, name: "Orders", action: showOrderScreen },
-  // { icon: <SellIcon />, name: 'Sell', action: showBuyScreen },
+// eslint-disable-next-line
+const buyActions = [
+  { icon: <BuyIcon />, name: "Buy", creator: showBuyScreen },
+  { icon: <OrdersIcon />, name: "Orders", creator: showOrderScreen },
+  //{ icon: <SellIcon />, name: "Sell", action: showBuyScreen },
 ];
 
-export const Toolbar = () => {
+type Props = {
+  app: PIXI.Application;
+};
+
+export const Toolbar = (props: Props) => {
+  const { app } = props;
   const classes = useStyles();
   const [direction] = React.useState<SpeedDialProps["direction"]>("up");
   const [open, setOpen] = React.useState(false);
   const [hidden] = React.useState(false);
   const dispatch = useDispatch();
+
+  const commands = [
+    {
+      icon: <GoAnywhereIcon />,
+      name: "Go anywhere",
+      action: () => {
+        dispatch(queue(goAnywhere(shrink(center(app.screen), 10))));
+      },
+    },
+  ];
 
   const handleClose = () => {
     setOpen(false);
@@ -57,10 +75,6 @@ export const Toolbar = () => {
 
   const handleOpen = () => {
     setOpen(true);
-  };
-
-  const handleClick = (creator: ActionCreatorWithoutPayload<string>) => {
-    dispatch(creator());
   };
 
   return (
@@ -74,12 +88,12 @@ export const Toolbar = () => {
       open={open}
       direction={direction}
     >
-      {actions.map((action) => (
+      {commands.map((command) => (
         <SpeedDialAction
-          key={action.name}
-          icon={action.icon}
-          tooltipTitle={action.name}
-          onClick={() => handleClick(action.action)}
+          key={command.name}
+          icon={command.icon}
+          tooltipTitle={command.name}
+          onClick={command.action}
         />
       ))}
     </SpeedDial>

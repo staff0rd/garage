@@ -37,22 +37,22 @@ interface Rect {
 
 export class Game {
   private pixi: PIXI.Application;
-  private config: Config;
-  private parts: Part[];
+  private config: Config | undefined;
+  private parts: Part[] = [];
   private graph: Graph<NodeData, LinkData> = createGraph();
   private floor: PIXI.Container;
   private floorColor = ColorUtils.randomColor("BlueGrey");
   private drivewayColor = Colors.BlueGrey.color();
   private tiles: Dictionary<PIXI.Container> = {};
   private pixiGraph: any;
-  private player: Player;
+  player: Player;
 
-  constructor(config: Config, parts: Part[], pixi: PIXI.Application) {
+  constructor(pixi: PIXI.Application) {
     PIXI.settings.RESOLUTION = window.devicePixelRatio;
-    this.config = config;
+    pixi.stage.removeChildren();
     this.pixi = pixi;
     this.floor = new PIXI.Container();
-    this.parts = parts;
+
     pixi.stage.addChild(this.floor);
     this.player = new Player(pixi.stage);
     //this.renderAndRunPixiGraph();
@@ -111,7 +111,9 @@ export class Game {
   //   block.addChild(g);
   // }
 
-  init() {
+  init(config: Config, parts: Part[]) {
+    this.config = config;
+    this.parts = parts;
     //this.generateStructure();
 
     this.draw();
@@ -147,7 +149,7 @@ export class Game {
   }
 
   private drawFloor() {
-    const tileSize = this.config.tileSize;
+    const tileSize = this.config!.tileSize;
     getNodes(this.graph).forEach((n) => {
       this.drawNode(n);
     });
@@ -179,7 +181,7 @@ export class Game {
     const container = this.getNodeContainer(n.id.toString());
     container.removeChildren();
 
-    const tileSize = this.config.tileSize;
+    const tileSize = this.config!.tileSize;
     const { x, y } = getPointFromNodeId(n.id);
 
     const color =
