@@ -45,5 +45,7 @@ export const useGame = () => {
     game.init();
   }, [game]);
 
+  app.stage.position.set(app.screen.width / 2, app.screen.height / 2);
+
   return { app };
 };

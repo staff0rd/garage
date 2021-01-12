@@ -6,6 +6,7 @@ import createGraph, { Graph, Node } from "ngraph.graph";
 import { Order } from "./store/orderScreenSlice";
 import { Part } from "./store/appSlice";
 import renderPixiGraph from "ngraph.pixi";
+import { Player } from "./blocks/Player";
 
 enum FloorType {
   Garage,
@@ -44,6 +45,7 @@ export class Game {
   private drivewayColor = Colors.BlueGrey.color();
   private tiles: Dictionary<PIXI.Container> = {};
   private pixiGraph: any;
+  private player: Player;
 
   constructor(config: Config, parts: Part[], pixi: PIXI.Application) {
     PIXI.settings.RESOLUTION = window.devicePixelRatio;
@@ -52,6 +54,7 @@ export class Game {
     this.floor = new PIXI.Container();
     this.parts = parts;
     pixi.stage.addChild(this.floor);
+    this.player = new Player(pixi.stage);
     //this.renderAndRunPixiGraph();
   }
 
