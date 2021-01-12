@@ -8,6 +8,7 @@ import { useSelector, useDispatch } from "react-redux";
 import OrderScreen from "./components/OrderScreen";
 import { useGame } from "./useGame";
 import Notifier from "./components/Notifier";
+// eslint-disable-next-line
 import Gamebar from "./components/Gamebar";
 
 const useStyles = makeStyles(() => ({
@@ -52,8 +53,8 @@ const App = () => {
   return (
     <div className={classes.root}>
       <div className={classes.pixi} ref={pixiUpdate} />
-      <Gamebar />
-      <Toolbar />
+      {/* <Gamebar /> */}
+      <Toolbar app={app} />
       <BuyScreen />
       <OrderScreen />
       <Notifier />
