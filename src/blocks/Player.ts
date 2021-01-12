@@ -2,7 +2,7 @@ import { Colors } from "@staff0rd/typescript";
 import * as PIXI from "pixi.js";
 
 export class Player {
-  pixelsPerSecond = 50;
+  pixelsPerSecond = 100;
   public get x(): number {
     return this._view.x;
   }
