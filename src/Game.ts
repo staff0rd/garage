@@ -1,11 +1,11 @@
-import * as PIXI from "pixi.js"
-import { Config } from './store/appSlice';
-import { Random, ColorUtils, Colors } from '@staff0rd/typescript';
-import { generate, getNodes, getPointFromNodeId } from './graph';
-import createGraph, { Graph, Node } from 'ngraph.graph';
+import * as PIXI from "pixi.js";
+import { Config } from "./store/appSlice";
+import { Random, ColorUtils, Colors } from "@staff0rd/typescript";
+import { generate, getNodes, getPointFromNodeId } from "./graph";
+import createGraph, { Graph, Node } from "ngraph.graph";
 import { Order } from "./store/orderScreenSlice";
-import { Part } from './store/appSlice';
-import renderPixiGraph from 'ngraph.pixi';
+import { Part } from "./store/appSlice";
+import renderPixiGraph from "ngraph.pixi";
 
 enum FloorType {
   Garage,
@@ -13,23 +13,26 @@ enum FloorType {
 }
 
 type PartCount = {
-  count: number
+  count: number;
 } & Part;
 
 interface NodeData {
-  floorType: FloorType
-  inventory: PartCount[]
+  floorType: FloorType;
+  inventory: PartCount[];
 }
 
-interface LinkData {
-
-}
+interface LinkData {}
 
 interface Dictionary<T> {
   [Key: string]: T;
 }
 
-interface Rect { x: number, y: number, width: number, height: number };
+interface Rect {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
 
 export class Game {
   private pixi: PIXI.Application;
@@ -49,26 +52,33 @@ export class Game {
     this.floor = new PIXI.Container();
     this.parts = parts;
     pixi.stage.addChild(this.floor);
-    this.thing = renderPixiGraph(this.graph, undefined, this.pixi.renderer, this.floor);
+    this.thing = renderPixiGraph(
+      this.graph,
+      undefined,
+      this.pixi.renderer,
+      this.floor
+    );
     this.thing.run();
   }
 
   deliver(o: Order): boolean {
-    const freeNode = getNodes(this.graph)
-      .find(n => n.data.floorType === FloorType.Driveway && 
-        (n.data.inventory.find(p => p.id === o.partId) || n.data.inventory.length < 4));
+    const freeNode = getNodes(this.graph).find(
+      (n) =>
+        n.data.floorType === FloorType.Driveway &&
+        (n.data.inventory.find((p) => p.id === o.partId) ||
+          n.data.inventory.length < 4)
+    );
     if (freeNode) {
-      const existing = freeNode.data.inventory.find(p => p.id === o.partId);
+      const existing = freeNode.data.inventory.find((p) => p.id === o.partId);
       if (existing) {
         existing.count += o.count;
-      } else
-      {
+      } else {
         freeNode.data.inventory.push({
           count: o.count,
           id: o.partId,
           name: o.name,
-          symbol: this.parts.find(p => p.id === o.partId)!.symbol
-        })
+          symbol: this.parts.find((p) => p.id === o.partId)!.symbol,
+        });
       }
     }
     if (freeNode) {
@@ -98,18 +108,32 @@ export class Game {
     const graphWidth = Random.between(4, 7);
     const graphHeight = Random.between(4, 7);
 
-    generate(0, 0, graphWidth, graphHeight, (x, y) => ({ inventory: [], floorType: FloorType.Garage }), this.graph);
-    const { nodes } = generate(0, -2, 2, 2, (x, y) => ({ inventory: [], floorType: FloorType.Driveway }), this.graph);
-    console.log(`added ${nodes.length} driveway nodes`)
+    generate(
+      0,
+      0,
+      graphWidth,
+      graphHeight,
+      (x, y) => ({ inventory: [], floorType: FloorType.Garage }),
+      this.graph
+    );
+    const { nodes } = generate(
+      0,
+      -2,
+      2,
+      2,
+      (x, y) => ({ inventory: [], floorType: FloorType.Driveway }),
+      this.graph
+    );
+    console.log(`added ${nodes.length} driveway nodes`);
 
     this.draw();
   }
 
   private draw() {
     //const tileSize = this.config.tileSize;
-    
+
     var layout = this.thing.layout;
-    layout.pinNode(this.graph.getNode('0|0'), true);
+    layout.pinNode(this.graph.getNode("0|0"), true);
 
     // getNodes(this.graph).forEach(n => {
     //   this.drawNode(n);
@@ -119,19 +143,17 @@ export class Game {
     //this.floor.pivot.set(this.floor.width / 2, (this.floor.height - 2 * tileSize) / 2);
   }
 
-  getNodeContainer(id: string)
-  {
+  getNodeContainer(id: string) {
     if (!this.tiles[id]) {
-      const container = new PIXI.Container(); 
+      const container = new PIXI.Container();
       container.interactive = true;
       container.interactiveChildren = false;
       container.buttonMode = true;
       this.tiles[id] = container;
       this.floor.addChild(container);
     }
-    
+
     return this.tiles[id];
-    
   }
 
   private drawNode(n: Node<NodeData>, p = false) {
@@ -141,34 +163,48 @@ export class Game {
     const tileSize = this.config.tileSize;
     const { x, y } = getPointFromNodeId(n.id);
 
-    const color = n.data.floorType === FloorType.Garage ? this.floorColor : this.drivewayColor;
+    const color =
+      n.data.floorType === FloorType.Garage
+        ? this.floorColor
+        : this.drivewayColor;
     const background = new PIXI.Graphics()
       .beginFill(color.shades[4].shade)
       .drawRect(x * tileSize, y * tileSize, tileSize, tileSize)
       .endFill();
     container.addChild(background);
-    
+
     n.data.inventory.forEach((pc, ix) => {
-      const rect: Rect = { x: x * tileSize, y: y * tileSize, width: tileSize / 2, height: tileSize / 2};
+      const rect: Rect = {
+        x: x * tileSize,
+        y: y * tileSize,
+        width: tileSize / 2,
+        height: tileSize / 2,
+      };
       switch (ix) {
-        case 0: break;
-        case 1: rect.x += tileSize / 2; break;
-        case 2: rect.y += tileSize / 2; break;
-        case 3: rect.x += tileSize / 2; rect.y += tileSize / 2; break;
+        case 0:
+          break;
+        case 1:
+          rect.x += tileSize / 2;
+          break;
+        case 2:
+          rect.y += tileSize / 2;
+          break;
+        case 3:
+          rect.x += tileSize / 2;
+          rect.y += tileSize / 2;
+          break;
       }
-      
+
       const inv = new PIXI.Graphics()
         .beginFill(Colors.Orange.C200)
-        .drawRect(rect.x, rect.y, rect.width, rect.height)
+        .drawRect(rect.x, rect.y, rect.width, rect.height);
 
       container.addChild(inv);
 
       const text = new PIXI.Text(pc.symbol, { fontSize: 14 });
-      text.pivot.set(text.width/2, text.height/2);
-      text.position.set(rect.x + tileSize/4, rect.y + tileSize/4);
+      text.pivot.set(text.width / 2, text.height / 2);
+      text.position.set(rect.x + tileSize / 4, rect.y + tileSize / 4);
       container.addChild(text);
-    })
+    });
   }
-
-
 }

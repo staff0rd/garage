@@ -1,41 +1,43 @@
-import React, { useEffect, useCallback } from 'react';
-import { Toolbar } from './components/Toolbar';
-import { makeStyles } from '@material-ui/core/styles';
-import BuyScreen from './components/BuyScreen';
-import { RootState } from './store/rootReducer';
-import { refreshOffers } from './store/buyScreenSlice'
-import { useSelector, useDispatch } from 'react-redux';
-import OrderScreen from './components/OrderScreen';
-import { useGame } from './useGame';
-import Notifier from './components/Notifier';
-import Gamebar from './components/Gamebar';
+import React, { useEffect, useCallback } from "react";
+import { Toolbar } from "./components/Toolbar";
+import { makeStyles } from "@material-ui/core/styles";
+import BuyScreen from "./components/BuyScreen";
+import { RootState } from "./store/rootReducer";
+import { refreshOffers } from "./store/buyScreenSlice";
+import { useSelector, useDispatch } from "react-redux";
+import OrderScreen from "./components/OrderScreen";
+import { useGame } from "./useGame";
+import Notifier from "./components/Notifier";
+import Gamebar from "./components/Gamebar";
 
 const useStyles = makeStyles(() => ({
   root: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   },
   pixi: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   },
 }));
 
 const App = () => {
   const classes = useStyles();
   const config = useSelector((state: RootState) => state.app.config);
-  
+
   const dispatch = useCallback(useDispatch(), []);
 
   const { app } = useGame();
-  
+
   const refresh = useCallback(() => {
     const nextRefresh = new Date();
-    nextRefresh.setSeconds(nextRefresh.getSeconds() + config.offerRefreshSeconds);
+    nextRefresh.setSeconds(
+      nextRefresh.getSeconds() + config.offerRefreshSeconds
+    );
     dispatch(refreshOffers(nextRefresh.getTime()));
   }, [dispatch, config.offerRefreshSeconds]);
 
-  useEffect(() => { 
+  useEffect(() => {
     refresh();
     const timer = setInterval(refresh, config.offerRefreshSeconds * 1000);
     return () => clearInterval(timer);
@@ -43,9 +45,9 @@ const App = () => {
 
   const pixiUpdate = (element: HTMLDivElement) => {
     if (element && element.children.length <= 0) {
-        element.appendChild(app.view);
+      element.appendChild(app.view);
     }
-  }
+  };
 
   return (
     <div className={classes.root}>
@@ -57,6 +59,6 @@ const App = () => {
       <Notifier />
     </div>
   );
-}
+};
 
 export default App;

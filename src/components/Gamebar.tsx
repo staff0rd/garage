@@ -1,12 +1,12 @@
-import React from 'react';
+import React from "react";
 import { makeStyles, AppBar, Toolbar, Typography } from "@material-ui/core";
-import { useSelector } from 'react-redux';
-import { RootState } from '../store/rootReducer';
+import { useSelector } from "react-redux";
+import { RootState } from "../store/rootReducer";
 
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     right: 0,
     left: 0,
@@ -35,9 +35,7 @@ export default function Gamebar() {
           <Typography variant="h6" className={classes.title}>
             garage
           </Typography>
-          <Typography variant="h6">
-            ${formatter.format(money)}
-          </Typography>
+          <Typography variant="h6">${formatter.format(money)}</Typography>
         </Toolbar>
       </AppBar>
     </div>
