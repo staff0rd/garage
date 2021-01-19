@@ -11,6 +11,7 @@ import { show as showBuyScreen } from "../store/buyScreenSlice";
 import { show as showOrderScreen } from "../store/orderScreenSlice";
 import { goAnywhere, queue } from "store/playerSlice";
 import { shrink, center } from "Geometry";
+import { app } from "store/displayMiddleware";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -47,12 +48,7 @@ const buyActions = [
   //{ icon: <SellIcon />, name: "Sell", action: showBuyScreen },
 ];
 
-type Props = {
-  app: PIXI.Application;
-};
-
-export const Toolbar = (props: Props) => {
-  const { app } = props;
+export const Toolbar = () => {
   const classes = useStyles();
   const [direction] = React.useState<SpeedDialProps["direction"]>("up");
   const [open, setOpen] = React.useState(false);
@@ -64,7 +60,8 @@ export const Toolbar = (props: Props) => {
       icon: <GoAnywhereIcon />,
       name: "Go anywhere",
       action: () => {
-        dispatch(queue(goAnywhere(shrink(center(app.screen), 10))));
+        const bounds = shrink(center(app.screen), 10);
+        dispatch(queue(goAnywhere(bounds)));
       },
     },
   ];

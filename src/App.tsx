@@ -1,12 +1,8 @@
-import React, { useEffect, useCallback } from "react";
+import React from "react";
 import { Toolbar } from "./components/Toolbar";
 import { makeStyles } from "@material-ui/core/styles";
-import { RootState } from "./store/rootReducer";
-import { refreshOffers } from "./store/buyScreenSlice";
-import { useSelector, useDispatch } from "react-redux";
-import { useGame } from "./useGame";
-// eslint-disable-next-line
-import Gamebar from "./components/Gamebar";
+import { app } from "store/displayMiddleware";
+import { usePlayer } from "usePlayer";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -21,25 +17,8 @@ const useStyles = makeStyles(() => ({
 
 const App = () => {
   const classes = useStyles();
-  const config = useSelector((state: RootState) => state.app.config);
 
-  const dispatch = useCallback(useDispatch(), []);
-
-  const { app } = useGame();
-
-  const refresh = useCallback(() => {
-    const nextRefresh = new Date();
-    nextRefresh.setSeconds(
-      nextRefresh.getSeconds() + config.offerRefreshSeconds
-    );
-    dispatch(refreshOffers(nextRefresh.getTime()));
-  }, [dispatch, config.offerRefreshSeconds]);
-
-  useEffect(() => {
-    refresh();
-    const timer = setInterval(refresh, config.offerRefreshSeconds * 1000);
-    return () => clearInterval(timer);
-  }, [refresh, config.offerRefreshSeconds]);
+  usePlayer();
 
   const pixiUpdate = (element: HTMLDivElement) => {
     if (element && element.children.length <= 0) {
@@ -50,11 +29,7 @@ const App = () => {
   return (
     <div className={classes.root}>
       <div className={classes.pixi} ref={pixiUpdate} />
-      {/* <Gamebar /> */}
-      <Toolbar app={app} />
-      {/* <BuyScreen />
-      <OrderScreen />
-      <Notifier /> */}
+      <Toolbar />
     </div>
   );
 };

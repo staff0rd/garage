@@ -19,11 +19,18 @@ const playerSlice = createSlice({
     dequeue(state) {
       state.actions = state.actions.slice(1);
     },
-    goAnywhere(state, { payload: bounds }: PayloadAction<IRectangle>) {
-      state.destination = {
-        x: Random.between(bounds.x, bounds.x + bounds.width),
-        y: Random.between(bounds.y, bounds.y + bounds.height),
-      };
+    goAnywhere: {
+      reducer: (state, { payload: { x, y } }: PayloadAction<IPoint>) => {
+        state.destination = {
+          x,
+          y,
+        };
+      },
+      prepare: (bounds: IRectangle) => {
+        const x = Random.between(bounds.x, bounds.x + bounds.width);
+        const y = Random.between(bounds.y, bounds.y + bounds.height);
+        return { payload: { x, y } };
+      },
     },
     goSomewhere(state, { payload: point }: PayloadAction<IPoint>) {
       state.destination = point;

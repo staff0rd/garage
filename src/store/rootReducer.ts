@@ -3,6 +3,7 @@ import buyScreenReducer from "./buyScreenSlice";
 import orderScreenReducer from "./orderScreenSlice";
 import appReducer from "./appSlice";
 import playerReducer from "./playerSlice";
+import resourceReducer from "./resourceSlice";
 import notificationReducer from "./notificationSlice";
 
 export const rootReducer = combineReducers({
@@ -11,6 +12,7 @@ export const rootReducer = combineReducers({
   orderScreen: orderScreenReducer,
   notification: notificationReducer,
   player: playerReducer,
+  resource: resourceReducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;
