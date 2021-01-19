@@ -7,6 +7,7 @@ import { Order } from "./store/orderScreenSlice";
 import { Part } from "./store/appSlice";
 import renderPixiGraph from "ngraph.pixi";
 import { Player } from "./blocks/Player";
+import { Resource } from "blocks/Resource";
 
 enum FloorType {
   Garage,
@@ -44,18 +45,37 @@ export class Game {
   private floorColor = ColorUtils.randomColor("BlueGrey");
   private drivewayColor = Colors.BlueGrey.color();
   private tiles: Dictionary<PIXI.Container> = {};
+  private interaction: PIXI.InteractionManager;
   private pixiGraph: any;
   player: Player;
+  resources: Resource[] = [];
 
   constructor(pixi: PIXI.Application) {
     PIXI.settings.RESOLUTION = window.devicePixelRatio;
     pixi.stage.removeChildren();
+
+    this.interaction = pixi.renderer.plugins.interaction;
+
+    this.interaction.on("pointerdown", (e: PIXI.InteractionEvent) => {
+      console.log(e.data.global, window.devicePixelRatio);
+      this.addResource(this.pixi.stage.toLocal(e.data.global));
+    });
+
     this.pixi = pixi;
     this.floor = new PIXI.Container();
 
     pixi.stage.addChild(this.floor);
     this.player = new Player(pixi.stage);
     //this.renderAndRunPixiGraph();
+  }
+
+  private addResource(position: PIXI.IPoint) {
+    this.resources.push(
+      new Resource(this.pixi.stage, {
+        x: position.x / window.devicePixelRatio,
+        y: position.y / window.devicePixelRatio,
+      })
+    );
   }
 
   private renderAndRunPixiGraph() {
