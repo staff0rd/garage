@@ -3,10 +3,9 @@ import { Player } from "blocks/Player";
 import { Resource } from "blocks/Resource";
 import * as PIXI from "pixi.js";
 import { Dispatch, Middleware } from "redux";
-import { addResource } from "./resourceSlice";
 import { RootState } from "./rootReducer";
 import * as gsap from "gsap";
-import { dequeue, goAnywhere, goSomewhere } from "./playerSlice";
+import { addResource, dequeue, goAnywhere, goSomewhere } from "./gameSlice";
 
 export const app = new PIXI.Application({
   width: window.innerWidth,

@@ -4,13 +4,15 @@ import { IPoint, IRectangle, Random } from "@staff0rd/typescript";
 const initialState: {
   actions: any[];
   destination: IPoint | undefined;
+  resources: IPoint[];
 } = {
   actions: [] as any[],
   destination: undefined,
+  resources: [],
 };
 
-const playerSlice = createSlice({
-  name: "player",
+const gameSlice = createSlice({
+  name: "game",
   initialState,
   reducers: {
     queue(state, action: PayloadAction<any>) {
@@ -35,9 +37,21 @@ const playerSlice = createSlice({
     goSomewhere(state, { payload: point }: PayloadAction<IPoint>) {
       state.destination = point;
     },
+    addResource(state, action: PayloadAction<IPoint>) {
+      return {
+        ...state,
+        resources: [...state.resources, action.payload],
+      };
+    },
   },
 });
 
-export const { queue, dequeue, goAnywhere, goSomewhere } = playerSlice.actions;
+export const {
+  queue,
+  dequeue,
+  goAnywhere,
+  goSomewhere,
+  addResource,
+} = gameSlice.actions;
 
-export default playerSlice.reducer;
+export default gameSlice.reducer;

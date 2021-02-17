@@ -1,15 +1,12 @@
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import GoAnywhereIcon from "@material-ui/icons/CallMissedOutgoing";
-import OrdersIcon from "@material-ui/icons/ListAlt";
-import BuyIcon from "@material-ui/icons/ShoppingCart";
+import CollectResourceIcon from "@material-ui/icons/LocalGroceryStore";
 import SpeedDial, { SpeedDialProps } from "@material-ui/lab/SpeedDial";
 import SpeedDialAction from "@material-ui/lab/SpeedDialAction";
 import SpeedDialIcon from "@material-ui/lab/SpeedDialIcon";
 import React from "react";
 import { useDispatch } from "react-redux";
-import { show as showBuyScreen } from "../store/buyScreenSlice";
-import { show as showOrderScreen } from "../store/orderScreenSlice";
-import { goAnywhere, queue } from "store/playerSlice";
+import { goAnywhere, queue } from "store/gameSlice";
 import { shrink, center } from "Geometry";
 import { app } from "store/displayMiddleware";
 
@@ -41,13 +38,6 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-// eslint-disable-next-line
-const buyActions = [
-  { icon: <BuyIcon />, name: "Buy", creator: showBuyScreen },
-  { icon: <OrdersIcon />, name: "Orders", creator: showOrderScreen },
-  //{ icon: <SellIcon />, name: "Sell", action: showBuyScreen },
-];
-
 export const Toolbar = () => {
   const classes = useStyles();
   const [direction] = React.useState<SpeedDialProps["direction"]>("up");
@@ -59,6 +49,14 @@ export const Toolbar = () => {
     {
       icon: <GoAnywhereIcon />,
       name: "Go anywhere",
+      action: () => {
+        const bounds = shrink(center(app.screen), 10);
+        dispatch(queue(goAnywhere(bounds)));
+      },
+    },
+    {
+      icon: <CollectResourceIcon />,
+      name: "Collect resource",
       action: () => {
         const bounds = shrink(center(app.screen), 10);
         dispatch(queue(goAnywhere(bounds)));
