@@ -46,9 +46,7 @@ const gameSlice = createSlice({
         };
       },
       prepare: (bounds: IRectangle) => {
-        const x = Random.between(bounds.x, bounds.x + bounds.width);
-        const y = Random.between(bounds.y, bounds.y + bounds.height);
-        return { payload: { x, y } };
+        return { payload: getRandomBoardPosition(bounds) };
       },
     },
     arrived(state, { payload: resource }: PayloadAction<string | undefined>) {
@@ -102,3 +100,9 @@ export const {
 } = gameSlice.actions;
 
 export default gameSlice.reducer;
+
+export function getRandomBoardPosition(bounds: IRectangle) {
+  const x = Random.between(bounds.x, bounds.x + bounds.width);
+  const y = Random.between(bounds.y, bounds.y + bounds.height);
+  return { x, y };
+}

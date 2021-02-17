@@ -1,11 +1,11 @@
-import { Colors, IPoint, Utils } from "@staff0rd/typescript";
+import { Colors } from "@staff0rd/typescript";
 import { Player } from "blocks/Player";
 import { Resource } from "blocks/Resource";
 import * as PIXI from "pixi.js";
 import { Dispatch, Middleware } from "redux";
 import { RootState } from "./rootReducer";
 import * as gsap from "gsap";
-import { v4 as guid } from "uuid";
+
 import {
   addResource,
   arrived,
@@ -53,8 +53,7 @@ export const displayMiddleware: Middleware<
   (app.renderer.plugins.interaction as PIXI.InteractionManager).on(
     "pointerdown",
     (e: PIXI.InteractionEvent) => {
-      const position = app.stage.toLocal(e.data.global);
-      dispatch(addResource({ x: position.x, y: position.y, id: guid() }));
+      //const position = app.stage.toLocal(e.data.global);
     }
   );
   return (next) => (action) => {
