@@ -1,14 +1,31 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { IPoint, IRectangle, Random } from "@staff0rd/typescript";
+import { distancePoint } from "Geometry";
+
+export type Destination = {
+  x: number;
+  y: number;
+  resourceId?: string;
+};
+
+type Resource = {
+  x: number;
+  y: number;
+  id: string;
+};
 
 const initialState: {
   actions: any[];
-  destination: IPoint | undefined;
-  resources: IPoint[];
+  destination: Destination | undefined;
+  position: IPoint;
+  boardResources: Resource[];
+  playerResources: Resource[];
 } = {
   actions: [] as any[],
   destination: undefined,
-  resources: [],
+  boardResources: [],
+  playerResources: [],
+  position: { x: 0, y: 0 },
 };
 
 const gameSlice = createSlice({
@@ -34,14 +51,42 @@ const gameSlice = createSlice({
         return { payload: { x, y } };
       },
     },
-    goSomewhere(state, { payload: point }: PayloadAction<IPoint>) {
-      state.destination = point;
+    arrived(state, { payload: resource }: PayloadAction<string | undefined>) {
+      if (resource)
+        state.boardResources = state.boardResources.filter(
+          (r) => r.id !== resource
+        );
+
+      state.position = { x: state.destination!.x, y: state.destination!.y };
+      state.destination = undefined;
     },
-    addResource(state, action: PayloadAction<IPoint>) {
+    goSomewhere(state, { payload: point }: PayloadAction<IPoint>) {
+      state.destination = { x: point.x, y: point.y };
+    },
+    addResource(state, action: PayloadAction<Resource>) {
+      const newResources = [...state.boardResources, action.payload];
+      console.log("resources:", newResources.length);
       return {
         ...state,
-        resources: [...state.resources, action.payload],
+        boardResources: newResources,
       };
+    },
+    getResource(state) {
+      if (state.boardResources.length) {
+        const { x, y, resourceId } = state.boardResources
+          .map((r) => ({
+            d: distancePoint(state.position, r),
+            x: r.x,
+            y: r.y,
+            resourceId: r.id,
+          }))
+          .sort((a, b) => a.d - b.d)[0];
+        state.destination = {
+          x,
+          y,
+          resourceId,
+        };
+      }
     },
   },
 });
@@ -52,6 +97,8 @@ export const {
   goAnywhere,
   goSomewhere,
   addResource,
+  arrived,
+  getResource,
 } = gameSlice.actions;
 
 export default gameSlice.reducer;

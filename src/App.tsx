@@ -13,6 +13,12 @@ const useStyles = makeStyles(() => ({
     width: "100%",
     height: "100%",
   },
+  toolBar: {
+    position: "fixed",
+    bottom: 0,
+    right: 0,
+    display: "flex",
+  },
 }));
 
 const App = () => {
@@ -29,7 +35,9 @@ const App = () => {
   return (
     <div className={classes.root}>
       <div className={classes.pixi} ref={pixiUpdate} />
-      <Toolbar />
+      <div className={classes.toolBar}>
+        <Toolbar />
+      </div>
     </div>
   );
 };

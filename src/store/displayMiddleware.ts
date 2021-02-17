@@ -5,7 +5,17 @@ import * as PIXI from "pixi.js";
 import { Dispatch, Middleware } from "redux";
 import { RootState } from "./rootReducer";
 import * as gsap from "gsap";
-import { addResource, dequeue, goAnywhere, goSomewhere } from "./gameSlice";
+import { v4 as guid } from "uuid";
+import {
+  addResource,
+  arrived,
+  dequeue,
+  Destination,
+  getResource,
+  goAnywhere,
+  goSomewhere,
+} from "./gameSlice";
+import { distancePoint } from "Geometry";
 
 export const app = new PIXI.Application({
   width: window.innerWidth,
@@ -20,16 +30,17 @@ window.onresize = () => {
   app.view.height = window.innerHeight;
 };
 
-const resources: Resource[] = [];
+let resources: Resource[] = [];
 const player = new Player(app.stage);
 
-const movePlayer = (destination: IPoint, dispatch: Dispatch) => {
-  const distance = Utils.distance(player, destination);
+const movePlayer = (destination: Destination, dispatch: Dispatch) => {
+  const distance = distancePoint(player, destination);
   const time = distance / player.pixelsPerSecond;
   gsap.TweenLite.to(player._view, time, {
     ...destination,
     ease: gsap.Power0.easeIn,
     onComplete: () => {
+      dispatch(arrived(destination.resourceId));
       dispatch(dequeue());
     },
   });
@@ -43,21 +54,41 @@ export const displayMiddleware: Middleware<
     "pointerdown",
     (e: PIXI.InteractionEvent) => {
       const position = app.stage.toLocal(e.data.global);
-      dispatch(addResource({ x: position.x, y: position.y }));
+      dispatch(addResource({ x: position.x, y: position.y, id: guid() }));
     }
   );
   return (next) => (action) => {
     if (addResource.match(action)) {
       const { x, y } = action.payload;
       resources.push(
-        new Resource(app.stage, {
-          x: x / window.devicePixelRatio,
-          y: y / window.devicePixelRatio,
-        })
+        new Resource(
+          app.stage,
+          {
+            x: x / window.devicePixelRatio,
+            y: y / window.devicePixelRatio,
+          },
+          action.payload.id
+        )
       );
+    } else if (arrived.match(action)) {
+      if (action.payload) {
+        const resourceId = action.payload!;
+        const resource = resources.find((r) => r.id === resourceId)!;
+        resource.remove();
+        resources = resources.filter((r) => r.id !== resource.id);
+      }
     } else if (goAnywhere.match(action) || goSomewhere.match(action)) {
       const { x, y } = action.payload;
       movePlayer({ x, y }, dispatch);
+    } else if (getResource.match(action)) {
+      if (getState().game.boardResources.length) {
+        const performed = next(action);
+        const destination = getState().game.destination!;
+        movePlayer(destination, dispatch);
+        return performed;
+      } else {
+        return dispatch(dequeue());
+      }
     }
     return next(action);
   };
