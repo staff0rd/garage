@@ -24,6 +24,9 @@ const useStyles = makeStyles((theme) => ({
     "&.MuiButton-root": {
       minWidth: 0,
     },
+    "&.MuiButton-containedSizeSmall": {
+      padding: theme.spacing(1),
+    },
   },
 }));
 
