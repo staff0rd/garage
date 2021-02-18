@@ -1,6 +1,6 @@
 import { Colors } from "@staff0rd/typescript";
 import { Player } from "blocks/Player";
-import { Resource } from "blocks/Resource";
+import { ResourceBlock } from "blocks/ResourceBlock";
 import * as PIXI from "pixi.js";
 import { Dispatch, Middleware } from "redux";
 import { RootState } from "./rootReducer";
@@ -11,11 +11,13 @@ import {
   arrived,
   dequeue,
   Destination,
+  discoverResource,
   getResource,
   goAnywhere,
   goSomewhere,
+  Resource,
 } from "./gameSlice";
-import { distancePoint } from "Geometry";
+import { distance, distancePoint } from "Geometry";
 
 export const app = new PIXI.Application({
   width: window.innerWidth,
@@ -30,15 +32,26 @@ window.onresize = () => {
   app.view.height = window.innerHeight;
 };
 
-let resources: Resource[] = [];
+let resources: ResourceBlock[] = [];
 const player = new Player(app.stage);
 
-const movePlayer = (destination: Destination, dispatch: Dispatch) => {
-  const distance = distancePoint(player, destination);
-  const time = distance / player.pixelsPerSecond;
+const movePlayer = (
+  destination: Destination,
+  getResources: () => Resource[],
+  dispatch: Dispatch
+) => {
+  const time = distancePoint(player, destination) / player.pixelsPerSecond;
   gsap.TweenLite.to(player._view, time, {
     ...destination,
     ease: gsap.Power0.easeIn,
+    onUpdate: () => {
+      getResources()
+        .filter((r) => !r.visible)
+        .filter((r) => isResourceVisible(r))
+        .forEach((r) => {
+          dispatch(discoverResource(r));
+        });
+    },
     onComplete: () => {
       dispatch(arrived(destination.resourceId));
       dispatch(dequeue());
@@ -50,6 +63,7 @@ export const displayMiddleware: Middleware<
   {}, // legacy type parameter added to satisfy interface signature
   RootState
 > = ({ getState, dispatch }) => {
+  const getResources = () => getState().game.boardResources;
   (app.renderer.plugins.interaction as PIXI.InteractionManager).on(
     "pointerdown",
     (e: PIXI.InteractionEvent) => {
@@ -58,15 +72,17 @@ export const displayMiddleware: Middleware<
   );
   return (next) => (action) => {
     if (addResource.match(action)) {
+      action.payload.visible = isResourceVisible(action.payload);
       const { x, y } = action.payload;
       resources.push(
-        new Resource(
+        new ResourceBlock(
           app.stage,
           {
             x: x / window.devicePixelRatio,
             y: y / window.devicePixelRatio,
           },
-          action.payload.id
+          action.payload.id,
+          action.payload.visible
         )
       );
     } else if (arrived.match(action)) {
@@ -78,17 +94,23 @@ export const displayMiddleware: Middleware<
       }
     } else if (goAnywhere.match(action) || goSomewhere.match(action)) {
       const { x, y } = action.payload;
-      movePlayer({ x, y }, dispatch);
+      movePlayer({ x, y }, getResources, dispatch);
     } else if (getResource.match(action)) {
-      if (getState().game.boardResources.length) {
-        const performed = next(action);
-        const destination = getState().game.destination!;
-        movePlayer(destination, dispatch);
+      const performed = next(action);
+      const destination = getState().game.destination;
+      if (destination) {
+        movePlayer(destination, getResources, dispatch);
         return performed;
       } else {
         return dispatch(dequeue());
       }
+    } else if (discoverResource.match(action)) {
+      resources.find((r) => r.id === action.payload.id)!.discover();
     }
     return next(action);
   };
+};
+
+const isResourceVisible = (r: Resource): boolean => {
+  return distance(r.x, r.y, player.x, player.y) <= Player._fogSize;
 };

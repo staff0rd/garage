@@ -42,7 +42,13 @@ export const Buttons = () => {
   };
 
   const addResourceCommand = () => {
-    dispatch(addResource({ ...getRandomBoardPosition(bounds()), id: guid() }));
+    dispatch(
+      addResource({
+        ...getRandomBoardPosition(bounds()),
+        id: guid(),
+        visible: false,
+      })
+    );
   };
 
   return (

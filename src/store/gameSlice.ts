@@ -8,10 +8,11 @@ export type Destination = {
   resourceId?: string;
 };
 
-type Resource = {
+export type Resource = {
   x: number;
   y: number;
   id: string;
+  visible: boolean;
 };
 
 const initialState: {
@@ -71,16 +72,23 @@ const gameSlice = createSlice({
         boardResources: newResources,
       };
     },
+    discoverResource(state, action: PayloadAction<Resource>) {
+      state.boardResources.find(
+        (r) => r.id === action.payload.id
+      )!.visible = true;
+    },
     getResource(state) {
-      if (state.boardResources.length) {
-        const { x, y, resourceId } = state.boardResources
-          .map((r) => ({
-            d: distancePoint(state.position, r),
-            x: r.x,
-            y: r.y,
-            resourceId: r.id,
-          }))
-          .sort((a, b) => a.d - b.d)[0];
+      const resourcesCloseBy = state.boardResources
+        .filter((r) => r.visible)
+        .map((r) => ({
+          d: distancePoint(state.position, r),
+          x: r.x,
+          y: r.y,
+          resourceId: r.id,
+        }))
+        .sort((a, b) => a.d - b.d);
+      if (resourcesCloseBy.length) {
+        const { x, y, resourceId } = resourcesCloseBy[0];
         state.destination = {
           x,
           y,
@@ -99,6 +107,7 @@ export const {
   addResource,
   arrived,
   getResource,
+  discoverResource,
 } = gameSlice.actions;
 
 export default gameSlice.reducer;
