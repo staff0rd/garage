@@ -3,6 +3,7 @@ import { Buttons } from "./components/Buttons";
 import { makeStyles } from "@material-ui/core/styles";
 import { app } from "store/displayMiddleware";
 import { usePlayer } from "usePlayer";
+import Queue from "components/Queue";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -12,6 +13,11 @@ const useStyles = makeStyles(() => ({
   pixi: {
     width: "100%",
     height: "100%",
+  },
+  queue: {
+    position: "fixed",
+    top: 0,
+    left: 0,
   },
   buttons: {
     position: "fixed",
@@ -35,6 +41,9 @@ const App = () => {
   return (
     <div className={classes.root}>
       <div className={classes.pixi} ref={pixiUpdate} />
+      <div className={classes.queue}>
+        <Queue />
+      </div>
       <div className={classes.buttons}>
         <Buttons />
       </div>

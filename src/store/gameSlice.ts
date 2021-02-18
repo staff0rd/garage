@@ -33,7 +33,9 @@ const gameSlice = createSlice({
   initialState,
   reducers: {
     queue(state, action: PayloadAction<any>) {
-      state.actions = [...state.actions, action.payload];
+      if (state.actions.length < 10) {
+        state.actions = [...state.actions, action.payload];
+      }
     },
     dequeue(state) {
       state.actions = state.actions.slice(1);
