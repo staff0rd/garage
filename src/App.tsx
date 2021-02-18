@@ -1,5 +1,5 @@
 import React from "react";
-import { Toolbar } from "./components/Toolbar";
+import { Buttons } from "./components/Buttons";
 import { makeStyles } from "@material-ui/core/styles";
 import { app } from "store/displayMiddleware";
 import { usePlayer } from "usePlayer";
@@ -13,7 +13,7 @@ const useStyles = makeStyles(() => ({
     width: "100%",
     height: "100%",
   },
-  toolBar: {
+  buttons: {
     position: "fixed",
     bottom: 0,
     right: 0,
@@ -35,8 +35,8 @@ const App = () => {
   return (
     <div className={classes.root}>
       <div className={classes.pixi} ref={pixiUpdate} />
-      <div className={classes.toolBar}>
-        <Toolbar />
+      <div className={classes.buttons}>
+        <Buttons />
       </div>
     </div>
   );

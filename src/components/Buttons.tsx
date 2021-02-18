@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
 
 const bounds = () => shrink(center(app.screen), 10);
 
-export const Toolbar = () => {
+export const Buttons = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
 
