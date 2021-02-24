@@ -12,6 +12,7 @@ export class ResourceBlock extends Positional {
   ) {
     super(parent, position, id);
     this._visible = visible;
+    this.draw();
   }
   discover() {
     this._visible = true;
