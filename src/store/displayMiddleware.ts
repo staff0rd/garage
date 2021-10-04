@@ -18,6 +18,7 @@ import {
   Resource,
 } from "./gameSlice";
 import { distance, distancePoint } from "Geometry";
+import { ResourceManager } from "./ResourceManager";
 
 export const app = new PIXI.Application({
   width: window.innerWidth,
@@ -32,8 +33,8 @@ window.onresize = () => {
   app.view.height = window.innerHeight;
 };
 
-let resources: ResourceBlock[] = [];
 const player = new Player(app.stage);
+const resourceManager = new ResourceManager(app);
 
 const movePlayer = (
   destination: Destination,
@@ -41,6 +42,7 @@ const movePlayer = (
   dispatch: Dispatch
 ) => {
   const time = distancePoint(player, destination) / player.pixelsPerSecond;
+  resourceManager.startingUpdate();
   gsap.TweenLite.to(player._view, time, {
     ...destination,
     ease: gsap.Power0.easeIn,
@@ -51,6 +53,7 @@ const movePlayer = (
         .forEach((r) => {
           dispatch(discoverResource(r));
         });
+      resourceManager.update();
     },
     onComplete: () => {
       dispatch(arrived(destination.resourceId));
@@ -72,25 +75,13 @@ export const displayMiddleware: Middleware<
   );
   return (next) => (action) => {
     if (addResource.match(action)) {
-      action.payload.visible = isResourceVisible(action.payload);
-      const { x, y } = action.payload;
-      resources.push(
-        new ResourceBlock(
-          app.stage,
-          {
-            x: x / window.devicePixelRatio,
-            y: y / window.devicePixelRatio,
-          },
-          action.payload.id,
-          action.payload.visible
-        )
-      );
+      const visible = isResourceVisible(action.payload);
+      const { x, y, id } = action.payload;
+      resourceManager.add(id, x, y, visible);
     } else if (arrived.match(action)) {
       if (action.payload) {
         const resourceId = action.payload!;
-        const resource = resources.find((r) => r.id === resourceId)!;
-        resource.remove();
-        resources = resources.filter((r) => r.id !== resource.id);
+        resourceManager.remove(resourceId);
       }
     } else if (goAnywhere.match(action) || goSomewhere.match(action)) {
       const { x, y } = action.payload;
@@ -105,7 +96,7 @@ export const displayMiddleware: Middleware<
         return dispatch(dequeue());
       }
     } else if (discoverResource.match(action)) {
-      resources.find((r) => r.id === action.payload.id)!.discover();
+      resourceManager.discover(action.payload.id);
     }
     return next(action);
   };
