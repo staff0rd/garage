@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { IPoint, IRectangle, Random } from "@staff0rd/typescript";
+import { IPoint, IRectangle } from "@staff0rd/typescript";
 import { distancePoint } from "Geometry";
+import { BoardManager } from "./BoardManager";
 
 export type Destination = {
   x: number;
@@ -49,7 +50,7 @@ const gameSlice = createSlice({
         };
       },
       prepare: (bounds: IRectangle) => {
-        return { payload: getRandomBoardPosition(bounds) };
+        return { payload: new BoardManager(bounds).getRandomBoardPosition() };
       },
     },
     arrived(state, { payload: resource }: PayloadAction<string | undefined>) {
@@ -73,9 +74,8 @@ const gameSlice = createSlice({
       };
     },
     discoverResource(state, action: PayloadAction<Resource>) {
-      state.boardResources.find(
-        (r) => r.id === action.payload.id
-      )!.visible = true;
+      state.boardResources.find((r) => r.id === action.payload.id)!.visible =
+        true;
     },
     getResource(state) {
       const resourcesCloseBy = state.boardResources
@@ -111,9 +111,3 @@ export const {
 } = gameSlice.actions;
 
 export default gameSlice.reducer;
-
-export function getRandomBoardPosition(bounds: IRectangle) {
-  const x = Random.between(bounds.x, bounds.x + bounds.width);
-  const y = Random.between(bounds.y, bounds.y + bounds.height);
-  return { x, y };
-}

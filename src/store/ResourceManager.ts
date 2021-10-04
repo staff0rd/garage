@@ -30,7 +30,14 @@ export class ResourceManager {
     if (this.lastUpdate) {
       this.cumulativeUpdate += new Date().getTime() - this.lastUpdate.getTime();
     }
+    const shouldHave = Math.round(this.cumulativeUpdate / 1000);
     this.lastUpdate = new Date();
+
+    if (shouldHave > this.resourcesAdded) {
+      this.resourcesAdded++;
+      return true;
+    }
+    return false;
   }
 
   remove(id: string) {

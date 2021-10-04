@@ -2,7 +2,7 @@ import { Colors } from "@staff0rd/typescript";
 import { Positional } from "./Positional";
 
 export class Player extends Positional {
-  pixelsPerSecond = 100;
+  pixelsPerSecond = 500;
   private static _size = 10;
   static _fogSize = 75;
   draw() {

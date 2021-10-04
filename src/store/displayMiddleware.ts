@@ -4,6 +4,7 @@ import * as PIXI from "pixi.js";
 import { Dispatch, Middleware } from "redux";
 import { RootState } from "./rootReducer";
 import * as gsap from "gsap";
+import { v4 as guid } from "uuid";
 
 import {
   addResource,
@@ -18,6 +19,7 @@ import {
 } from "./gameSlice";
 import { distance, distancePoint } from "Geometry";
 import { ResourceManager } from "./ResourceManager";
+import { BoardManager } from "./BoardManager";
 
 export const app = new PIXI.Application({
   width: window.innerWidth,
@@ -32,6 +34,7 @@ window.onresize = () => {
   app.view.height = window.innerHeight;
 };
 
+const board = BoardManager.fromApp(app);
 const player = new Player(app.stage);
 const resourceManager = new ResourceManager(app);
 
@@ -52,7 +55,15 @@ const movePlayer = (
         .forEach((r) => {
           dispatch(discoverResource(r));
         });
-      resourceManager.update();
+      const shouldAdd = resourceManager.update();
+      if (shouldAdd)
+        dispatch(
+          addResource({
+            ...board.getRandomBoardPosition(),
+            id: guid(),
+            visible: false,
+          })
+        );
     },
     onComplete: () => {
       dispatch(arrived(destination.resourceId));

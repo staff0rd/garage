@@ -3,15 +3,8 @@ import GoAnywhereIcon from "@material-ui/icons/CallMissedOutgoing";
 import CollectResourceIcon from "@material-ui/icons/LocalGroceryStore";
 import React from "react";
 import { useDispatch } from "react-redux";
-import {
-  addResource,
-  getRandomBoardPosition,
-  getResource,
-  goAnywhere,
-  queue,
-} from "store/gameSlice";
-import { shrink, center } from "Geometry";
-import { app } from "store/displayMiddleware";
+import { addResource, getResource, goAnywhere, queue } from "store/gameSlice";
+import { BoardManager } from "store/BoardManager";
 import HotKey from "./Hotkey";
 import { Button } from "@material-ui/core";
 import NewReleasesIcon from "@material-ui/icons/NewReleases";
@@ -30,14 +23,16 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const bounds = () => shrink(center(app.screen), 10);
+type Props = {
+  board: BoardManager;
+};
 
-export const Buttons = () => {
+export const Buttons = ({ board }: Props) => {
   const classes = useStyles();
   const dispatch = useDispatch();
 
   const goAnywhereCommand = () => {
-    dispatch(queue(goAnywhere(bounds())));
+    dispatch(queue(goAnywhere(board.bounds)));
   };
 
   const getResourceCommand = () => {
@@ -47,7 +42,7 @@ export const Buttons = () => {
   const addResourceCommand = () => {
     dispatch(
       addResource({
-        ...getRandomBoardPosition(bounds()),
+        ...board.getRandomBoardPosition(),
         id: guid(),
         visible: false,
       })
@@ -56,40 +51,28 @@ export const Buttons = () => {
 
   return (
     <>
-      <HotKey keys={["KeyG"]} scope={window.document}>
+      <HotKey keys={["KeyZ"]} scope={window.document}>
         <Button
           className={classes.button}
           variant="contained"
           size="small"
-          aria-label="Go anywhere (G)"
-          title="Go anywhere (G)"
+          aria-label="Go anywhere (Z)"
+          title="Go anywhere (Z)"
           onClick={goAnywhereCommand}
         >
           <GoAnywhereIcon />
         </Button>
       </HotKey>
-      <HotKey keys={["KeyH"]} scope={window.document}>
+      <HotKey keys={["KeyX"]} scope={window.document}>
         <Button
           className={classes.button}
           variant="contained"
           size="small"
-          aria-label="Collect resource (h)"
-          title="Collect resource (h)"
+          aria-label="Collect resource (X)"
+          title="Collect resource (X)"
           onClick={getResourceCommand}
         >
           <CollectResourceIcon />
-        </Button>
-      </HotKey>
-      <HotKey keys={["KeyN"]} scope={window.document}>
-        <Button
-          className={classes.button}
-          variant="contained"
-          size="small"
-          aria-label="Add resource (n)"
-          title="Add resource (n)"
-          onClick={addResourceCommand}
-        >
-          <NewReleasesIcon />
         </Button>
       </HotKey>
     </>

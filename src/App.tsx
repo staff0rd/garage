@@ -4,6 +4,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { app } from "store/displayMiddleware";
 import { usePlayer } from "usePlayer";
 import Queue from "components/Queue";
+import { BoardManager } from "store/BoardManager";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -27,6 +28,8 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
+const board = BoardManager.fromApp(app);
+
 const App = () => {
   const classes = useStyles();
 
@@ -45,7 +48,7 @@ const App = () => {
         <Queue />
       </div>
       <div className={classes.buttons}>
-        <Buttons />
+        <Buttons board={board} />
       </div>
     </div>
   );
