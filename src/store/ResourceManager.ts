@@ -1,6 +1,6 @@
 import { ResourceBlock } from "blocks/ResourceBlock";
 
-const ADD_RESOURCE_AT = 500;
+const ADD_RESOURCE_AT = 1000;
 
 export class ResourceManager {
   private lastUpdate: undefined | Date;
@@ -30,7 +30,7 @@ export class ResourceManager {
     if (this.lastUpdate) {
       this.cumulativeUpdate += new Date().getTime() - this.lastUpdate.getTime();
     }
-    const shouldHave = Math.round(this.cumulativeUpdate / 1000);
+    const shouldHave = Math.round(this.cumulativeUpdate / ADD_RESOURCE_AT);
     this.lastUpdate = new Date();
 
     if (shouldHave > this.resourcesAdded) {
