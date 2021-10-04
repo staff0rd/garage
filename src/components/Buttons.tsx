@@ -3,12 +3,10 @@ import GoAnywhereIcon from "@material-ui/icons/CallMissedOutgoing";
 import CollectResourceIcon from "@material-ui/icons/LocalGroceryStore";
 import React from "react";
 import { useDispatch } from "react-redux";
-import { addResource, getResource, goAnywhere, queue } from "store/gameSlice";
+import { getResource, goAnywhere, queue } from "store/gameSlice";
 import { BoardManager } from "store/BoardManager";
 import HotKey from "./Hotkey";
 import { Button } from "@material-ui/core";
-import NewReleasesIcon from "@material-ui/icons/NewReleases";
-import { v4 as guid } from "uuid";
 
 const useStyles = makeStyles((theme) => ({
   button: {
@@ -37,16 +35,6 @@ export const Buttons = ({ board }: Props) => {
 
   const getResourceCommand = () => {
     dispatch(queue(getResource()));
-  };
-
-  const addResourceCommand = () => {
-    dispatch(
-      addResource({
-        ...board.getRandomBoardPosition(),
-        id: guid(),
-        visible: false,
-      })
-    );
   };
 
   return (
