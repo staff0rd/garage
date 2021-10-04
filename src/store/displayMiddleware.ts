@@ -1,6 +1,5 @@
 import { Colors } from "@staff0rd/typescript";
 import { Player } from "blocks/Player";
-import { ResourceBlock } from "blocks/ResourceBlock";
 import * as PIXI from "pixi.js";
 import { Dispatch, Middleware } from "redux";
 import { RootState } from "./rootReducer";
